@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>架空之名 · 地名站名生成器</title>
+    <style>
+        /* 全局重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0c0c0e;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-primary: #f0ece8;
+            --text-secondary: #9a9591;
+            --text-muted: #5f5b58;
+            --accent: #b0a8a0;
+            --accent-glow: rgba(180, 170, 160, 0.08);
+            --font-display: 'Segoe UI', 'PingFang SC', system-ui, -apple-system, sans-serif;
+            --radius: 1.6rem;
+            --radius-sm: 0.8rem;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-display);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 1.8rem 1.2rem;
+            background-image:
+                radial-gradient(ellipse at 20% 30%, rgba(180, 170, 160, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(180, 170, 160, 0.03) 0%, transparent 50%);
+        }
+
+        /* 粒子背景 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            width: 100%;
+            background: var(--bg-card);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-radius: var(--radius);
+            padding: 2.2rem 2.5rem 2.8rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.015) inset;
+        }
+
+        @media (max-width: 780px) {
+            .container {
+                padding: 1.5rem 1.2rem 2rem;
+                border-radius: 1.2rem;
+            }
+        }
+
+        /* 头部 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+        .header-left h1 span {
+            font-weight: 600;
+            color: #d0c8c0;
+        }
+        .header-left .sub {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .header-actions button,
+        .header-actions select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.25s;
+            backdrop-filter: blur(4px);
+            font-family: inherit;
+        }
+
+        .header-actions button:hover,
+        .header-actions select:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+        .header-actions select option {
+            background: #1a1816;
+            color: #f0ece8;
+        }
+
+        /* 主体网格 */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 860px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 1.8rem;
+            }
+        }
+
+        /* 左侧控制区 */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+        }
+
+        .control-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem 1.5rem 1.5rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .control-section .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem 1.2rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .control-row label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .control-row input[type="number"] {
+            width: 60px;
+            padding: 0.3rem 0.5rem;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: 30px;
+            color: #f0ece8;
+            font-size: 0.9rem;
+            text-align: center;
+            outline: none;
+            transition: 0.2s;
+        }
+        .control-row input[type="number"]:focus {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 复选框组 */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            padding: 0.3rem 0;
+        }
+
+        .checkbox-group label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .checkbox-group label:hover {
+            color: #fff;
+        }
+        .checkbox-group input[type="checkbox"] {
+            accent-color: #b0a8a0;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        /* 后缀标签区 */
+        .suffix-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.5rem;
+            margin-top: 0.4rem;
+            max-height: 100px;
+            overflow-y: auto;
+            padding: 0.3rem 0.1rem;
+        }
+
+        .suffix-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            cursor: default;
+            user-select: none;
+        }
+        .suffix-tag:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #fff;
+        }
+        .suffix-tag.active {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .suffix-add-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+        }
+        .suffix-add-row input {
+            flex: 1;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-subtle);
+            border-radius: 30px;
+            color: #f0ece8;
+            font-size: 0.8rem;
+            outline: none;
+            min-width: 60px;
+        }
+        .suffix-add-row input:focus {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .suffix-add-row button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .suffix-add-row button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .suffix-count {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* 生成按钮 */
+        .generate-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 60px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+            backdrop-filter: blur(4px);
+        }
+
+        .generate-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: scale(1.005);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 右侧结果区 */
+        .result-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .result-header .count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .result-header .count strong {
+            color: var(--text-primary);
+        }
+
+        .result-header .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .result-header .actions button {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .result-header .actions button:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        /* 结果列表 */
+        .result-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.3rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 40px;
+            border: 1px solid var(--border-subtle);
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .result-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .result-item .name {
+            color: var(--text-primary);
+        }
+        .result-item .meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+        .result-item .meta .tag {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.05rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .result-item .copy-single {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0 0.3rem;
+            transition: 0.2s;
+        }
+        .result-item .copy-single:hover {
+            color: #fff;
+        }
+
+        /* 线路规划区 */
+        .line-plan {
+            margin-top: 1.8rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .line-plan .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .line-plan textarea {
+            width: 100%;
+            min-height: 90px;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: 0.2s;
+            line-height: 1.7;
+        }
+
+        .line-plan textarea:focus {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .line-plan .hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
+
+        /* 页脚 */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1.5rem;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 2rem 0;
+            letter-spacing: 0.3px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .header-left h1 {
+                font-size: 1.3rem;
+            }
+            .control-section {
+                padding: 0.8rem 1rem 1.2rem;
+            }
+            .result-item {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+                flex-wrap: wrap;
+                gap: 0.3rem 0.5rem;
+            }
+            .result-item .meta {
+                font-size: 0.6rem;
+            }
+            .suffix-tags {
+                max-height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- 主容器 -->
+    <div class="container">
+
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-left">
+                <h1>架空<span>之名</span></h1>
+                <div class="sub">基于真实地铁站名统计 · 多风格切换 · 究极至尊版</div>
+            </div>
+            <div class="header-actions">
+                <select id="regionSelect">
+                    <option value="chinese">中式</option>
+                    <option value="japanese">日式</option>
+                    <option value="western">西式</option>
+                    <option value="cyber">赛博</option>
+                    <option value="fantasy">奇幻</option>
+                    <option value="wasteland">废土</option>
+                </select>
+                <button id="themeRandomBtn">随机风格</button>
+            </div>
+        </header>
+
+        <!-- 主网格 -->
+        <div class="main-grid">
+
+            <!-- 左侧控制 -->
+            <div class="controls">
+
+                <!-- 生成参数 -->
+                <div class="control-section">
+                    <div class="section-label">生成参数</div>
+                    <div class="control-row">
+                        <label>生成数量</label>
+                        <input type="number" id="countInput" value="20" min="1" max="100" />
+                        <label style="margin-left:0.6rem;">站名类型</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" class="type-check" value="road" checked /> 路名型</label>
+                        <label><input type="checkbox" class="type-check" value="landmark" checked /> 地标型</label>
+                        <label><input type="checkbox" class="type-check" value="district" checked /> 片区型</label>
+                        <label><input type="checkbox" class="type-check" value="nature" checked /> 自然地貌</label>
+                        <label><input type="checkbox" class="type-check" value="mixed" checked /> 混合随机</label>
+                    </div>
+                </div>
+
+                <!-- 字数与后缀库 -->
+                <div class="control-section">
+                    <div class="section-label">字数与后缀库</div>
+                    <div class="control-row">
+                        <label><input type="checkbox" id="len2" checked /> 两字</label>
+                        <label><input type="checkbox" id="len3" checked /> 三字</label>
+                        <label><input type="checkbox" id="len4" checked /> 四字</label>
+                    </div>
+
+                    <div class="suffix-tags" id="suffixTags">
+                        <!-- 由 JS 动态渲染 -->
+                    </div>
+
+                    <div class="suffix-add-row">
+                        <input type="text" id="suffixInput" placeholder="输入新后缀" />
+                        <button id="addSuffixBtn">添加</button>
+                    </div>
+                    <div class="suffix-count" id="suffixCount">当前后缀：0 项</div>
+                </div>
+
+                <!-- 生成按钮 -->
+                <button class="generate-btn" id="generateBtn">生成站名</button>
+            </div>
+
+            <!-- 右侧结果 -->
+            <div class="result-area">
+                <div class="result-header">
+                    <span class="count">已生成：<strong id="resultCount">0</strong> 个站名</span>
+                    <div class="actions">
+                        <button id="copyAllBtn">复制全部</button>
+                        <button id="clearBtn">清空</button>
+                    </div>
+                </div>
+
+                <div class="result-list" id="resultList">
+                    <div class="empty-state">点击「生成站名」开始创建</div>
+                </div>
+
+                <!-- 线路规划区 -->
+                <div class="line-plan">
+                    <div class="section-label">未来规划</div>
+                    <textarea id="linePlan" placeholder="规划项目：将导入的AARC存档中的站名全部提取"></textarea>
+                    <div class="hint">还在施工，这一段我想适配或允许将AARC存档导入转换成站名</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">架空之名 · 究极至尊版 · 持续迭代中</div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  1. 粒子背景
+        // ================================================================
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 1.6 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.15;
+                this.speedY = (Math.random() - 0.5) * 0.15;
+                this.opacity = Math.random() * 0.3 + 0.05;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > width) this.speedX *= -1;
+                if (this.y < 0 || this.y > height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(200, 190, 180, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 70; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => { p.update();
+                p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ================================================================
+        //  2. 核心数据
+        // ================================================================
+
+        // 默认后缀库
+        const DEFAULT_SUFFIXES = [
+            '坪', '坡', '坑', '塘', '圩', '埠', '埔', '坝', '墩', '城',
+            '坊', '场', '渠', '溪', '港', '湾', '湖', '池', '洼', '沟',
+            '洲', '涧', '河', '滘', '洞', '沙', '山', '岗', '岛', '屿',
+            '岭', '集', '棚', '楼', '桥', '村', '矶', '口', '园', '围',
+            '府', '庄', '店', '庙', '巷', '路', '街', '陂', '陵', '寺',
+            '祠', '寨', '营', '苑', '郭', '铺', '堂', '镇', '角', '里',
+            '台', '户', '丘', '井', '屯', '门', '卫', '甸'
+        ];
+
+        // 各风格词根库
+        const REGION_LEXICON = {
+            chinese: {
+                roots: ['永', '安', '宁', '平', '和', '长', '乐', '康', '泰', '祥', '瑞', '福', '德', '仁', '义', '礼', '智',
+                    '信', '云', '山', '水', '月', '风', '雨', '雪', '霞', '林', '竹', '梅', '兰', '松', '柳', '荷', '溪', '涧', '谷',
+                    '峰', '岭', '川', '泽', '湖', '海', '江', '河', '泊', '青', '白', '碧', '翠', '苍', '玄', '素', '丹', '紫', '金',
+                    '玉', '灵', '仙', '圣', '隐', '逸', '清', '明', '太'
+                ],
+                roadWords: ['大', '中', '华', '兴', '盛', '世', '通', '达', '顺', '畅', '广', '新', '建', '民', '生'],
+                landmarkWords: ['公园', '广场', '中心', '大厦', '剧院', '体育馆', '博物馆', '图书馆', '车站', '机场', '码头', '大桥', '隧道'],
+                districtWords: ['村', '街', '巷', '里', '弄', '坊', '庄', '屯', '营', '寨', '堡', '驿', '关', '镇', '乡'],
+                natureWords: ['山', '河', '湖', '海', '江', '溪', '涧', '峰', '岭', '崖', '川', '泽', '洲', '岛', '湾', '港', '滩']
+            },
+            japanese: {
+                roots: ['樱', '枫', '竹', '梅', '松', '鹤', '鹿', '狐', '月', '星', '霞', '雾', '雪', '雨', '风', '林', '川', '谷',
+                    '海', '岬', '青', '赤', '白', '紫', '金', '银', '翠', '茜', '绯', '绀', '萌', '浅', '深', '早', '晚', '朝', '夜'
+                ],
+                roadWords: ['大', '中', '本', '通', '目', '番', '町', '丁', '目'],
+                landmarkWords: ['神社', '寺庙', '公园', '广场', '塔', '阁', '馆', '站', '港', '桥', '台'],
+                districtWords: ['町', '村', '驿', '台', '丘', '崎', '津', '浦', '浜', '原', '野', '森', '谷'],
+                natureWords: ['山', '川', '岬', '浦', '浜', '原', '野', '森', '丘', '谷', '峡', '岛', '崎', '津', '湾']
+            },
+            western: {
+                roots: ['艾', '贝', '西', '洛', '兰', '德', '维', '克', '特', '雷', '安', '鲁', '菲', '尔', '顿', '林', '伍', '堡',
+                    '斯', '塔', '福', '桥', '港', '湾', '山', '湖', '河', '谷'
+                ],
+                roadWords: ['主', '大', '中央', '国王', '皇后', '公园', '花园', '大道', '街'],
+                landmarkWords: ['城堡', '大教堂', '广场', '市场', '剧院', '码头', '灯塔', '桥梁', '站'],
+                districtWords: ['村', '镇', '区', '郡', '城', '堡', '港', '湾', '谷', '山'],
+                natureWords: ['山', '湖', '河', '谷', '湾', '峰', '峡', '岛', '角', '岬']
+            },
+            cyber: {
+                roots: ['零', '芯', '磁', '光', '网', '频', '码', '云', '界', '域', '数', '智', '核', '晶', '脉', '链', '矩', '阵',
+                    '幻', '霓'
+                ],
+                roadWords: ['超', '极', '虚', '幻', '影', '光', '电', '磁', '量', '子', '熵', '暗', '幽', '脉', '频'],
+                landmarkWords: ['中心', '枢纽', '塔', '港', '站', '核', '脉', '云', '界', '所', '库', '端', '堡'],
+                districtWords: ['区', '域', '层', '带', '环', '圈', '网', '云'],
+                natureWords: ['流', '波', '光', '影', '雾', '汐', '潮', '镜', '虚']
+            },
+            fantasy: {
+                roots: ['霜', '焰', '风', '雷', '龙', '狮', '鹰', '狼', '鹿', '熊', '鸦', '星', '辰', '月', '日', '辉', '影', '魂',
+                    '灵', '魔'
+                ],
+                roadWords: ['圣', '暗', '炎', '冰', '金', '银', '翠', '琥珀', '赤', '青', '玄', '白', '灰', '暮', '曙', '永', '无'],
+                landmarkWords: ['堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠',
+                    '雪原'
+                ],
+                districtWords: ['城', '镇', '村', '堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭'],
+                natureWords: ['山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠', '雪原', '峡', '谷']
+            },
+            wasteland: {
+                roots: ['锈', '骨', '沙', '尘', '铁', '钢', '废', '墟', '裂', '烬', '灰', '荒', '孤', '哨', '堡', '驿', '途', '漠',
+                    '岩', '陷'
+                ],
+                roadWords: ['锈蚀', '枯骨', '沙暴', '铁锈', '钢骨', '废土', '废墟', '裂痕', '余烬', '灰烬', '荒芜', '孤寂', '哨站'],
+                landmarkWords: ['堡', '站', '驿', '镇', '墟', '城', '据点', '营地', '哨塔', '仓库', '工厂', '铁路'],
+                districtWords: ['区', '域', '层', '带', '圈', '地', '墟', '镇', '堡'],
+                natureWords: ['河', '岭', '沙', '尘', '谷', '裂', '漠', '岩', '石']
+            }
+        };
+
+        // 风格显示名称
+        const REGION_NAMES = {
+            chinese: '中式',
+            japanese: '日式',
+            western: '西式',
+            cyber: '赛博',
+            fantasy: '奇幻',
+            wasteland: '废土'
+        };
+
+        // ================================================================
+        //  3. 状态
+        // ================================================================
+
+        let suffixes = [...DEFAULT_SUFFIXES];
+        let results = [];
+        let currentRegion = 'chinese';
+
+        // ================================================================
+        //  4. 核心生成逻辑
+        // ================================================================
+
+        function pick(arr) {
+            if (!arr || arr.length === 0) return '?';
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateNames(count, types, lengths, region) {
+            const lexicon = REGION_LEXICON[region] || REGION_LEXICON.chinese;
+            const allSuffixes = suffixes.length > 0 ? suffixes : DEFAULT_SUFFIXES;
+            const names = [];
+
+            for (let i = 0; i < count; i++) {
+                const type = pick(types);
+                const length = pick(lengths);
+                let name = '';
+
+                let wordPool = [];
+                let suffix = '';
+
+                switch (type) {
+                    case 'road':
+                        wordPool = lexicon.roadWords || lexicon.roots;
+                        suffix = '路';
+                        break;
+                    case 'landmark':
+                        wordPool = lexicon.landmarkWords || lexicon.roots;
+                        suffix = pick(['公园', '广场', '中心', '塔', '站', '港', '桥']);
+                        break;
+                    case 'district':
+                        wordPool = lexicon.districtWords || lexicon.roots;
+                        suffix = pick(allSuffixes);
+                        break;
+                    case 'nature':
+                        wordPool = lexicon.natureWords || lexicon.roots;
+                        suffix = pick(allSuffixes);
+                        break;
+                    case 'mixed':
+                    default:
+                        wordPool = lexicon.roots;
+                        suffix = pick(allSuffixes);
+                        break;
+                }
+
+                if (length === 2) {
+                    if (Math.random() > 0.4 && suffix) {
+                        name = pick(wordPool) + suffix;
+                    } else {
+                        name = pick(wordPool) + pick(wordPool);
+                    }
+                } else if (length === 3) {
+                    if (Math.random() > 0.3 && suffix) {
+                        name = pick(wordPool) + pick(wordPool) + suffix;
+                    } else {
+                        name = pick(wordPool) + pick(wordPool) + pick(wordPool);
+                    }
+                } else {
+                    if (Math.random() > 0.3 && suffix) {
+                        name = pick(wordPool) + pick(wordPool) + pick(wordPool) + suffix;
+                    } else {
+                        name = pick(wordPool) + pick(wordPool) + pick(wordPool) + pick(wordPool);
+                    }
+                }
+
+                if (name.length < 2) name = pick(wordPool) + pick(allSuffixes);
+
+                if (name.length > length) {
+                    name = name.slice(0, length);
+                }
+
+                const typeLabel = {
+                    road: '路名',
+                    landmark: '地标',
+                    district: '片区',
+                    nature: '自然',
+                    mixed: '混合'
+                } [type] || '未知';
+
+                names.push({ name, type: typeLabel, length: name.length });
+            }
+
+            return names;
+        }
+
+        // ================================================================
+        //  5. UI 交互
+        // ================================================================
+
+        const resultList = document.getElementById('resultList');
+        const resultCount = document.getElementById('resultCount');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyAllBtn = document.getElementById('copyAllBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const countInput = document.getElementById('countInput');
+        const suffixTags = document.getElementById('suffixTags');
+        const suffixInput = document.getElementById('suffixInput');
+        const addSuffixBtn = document.getElementById('addSuffixBtn');
+        const suffixCount = document.getElementById('suffixCount');
+        const regionSelect = document.getElementById('regionSelect');
+        const themeRandomBtn = document.getElementById('themeRandomBtn');
+        const linePlan = document.getElementById('linePlan');
+
+        const len2 = document.getElementById('len2');
+        const len3 = document.getElementById('len3');
+        const len4 = document.getElementById('len4');
+        const typeChecks = document.querySelectorAll('.type-check');
+
+        function renderSuffixes() {
+            suffixTags.innerHTML = suffixes.map(s =>
+                `<span class="suffix-tag">${s}</span>`
+            ).join('');
+            suffixCount.textContent = `当前后缀：${suffixes.length} 项`;
+        }
+
+        function addSuffix() {
+            const val = suffixInput.value.trim();
+            if (!val) return;
+            if (suffixes.includes(val)) {
+                alert('后缀已存在');
+                return;
+            }
+            suffixes.push(val);
+            renderSuffixes();
+            suffixInput.value = '';
+        }
+
+        function getSelectedTypes() {
+            const selected = [];
+            typeChecks.forEach(cb => {
+                if (cb.checked) selected.push(cb.value);
+            });
+            if (selected.length === 0) {
+                typeChecks.forEach(cb => cb.checked = true);
+                return ['road', 'landmark', 'district', 'nature', 'mixed'];
+            }
+            return selected;
+        }
+
+        function getSelectedLengths() {
+            const lengths = [];
+            if (len2.checked) lengths.push(2);
+            if (len3.checked) lengths.push(3);
+            if (len4.checked) lengths.push(4);
+            if (lengths.length === 0) {
+                len2.checked = true;
+                len3.checked = true;
+                len4.checked = true;
+                return [2, 3, 4];
+            }
+            return lengths;
+        }
+
+        function generateAndRender() {
+            const count = parseInt(countInput.value) || 20;
+            const types = getSelectedTypes();
+            const lengths = getSelectedLengths();
+            const region = currentRegion;
+
+            const names = generateNames(count, types, lengths, region);
+            results = names;
+            renderResults(names);
+        }
+
+        function renderResults(names) {
+            if (!names || names.length === 0) {
+                resultList.innerHTML = `<div class="empty-state">点击「生成站名」开始创建</div>`;
+                resultCount.textContent = '0';
+                return;
+            }
+
+            resultList.innerHTML = names.map((item, index) =>
+                `<div class="result-item">
+                    <span class="name">${item.name}</span>
+                    <div class="meta">
+                        <span class="tag">${item.type}</span>
+                        <span>${item.length}字</span>
+                        <button class="copy-single" data-index="${index}" title="复制单个">复制</button>
+                    </div>
+                </div>`
+            ).join('');
+
+            resultCount.textContent = names.length;
+
+            document.querySelectorAll('.copy-single').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    const name = results[idx]?.name || '';
+                    if (name) {
+                        navigator.clipboard.writeText(name).then(() => {
+                            this.textContent = '已复制';
+                            setTimeout(() => { this.textContent = '复制'; }, 800);
+                        });
+                    }
+                });
+            });
+        }
+
+        function copyAll() {
+            const names = results.map(r => r.name).join('\n');
+            if (!names) return;
+            navigator.clipboard.writeText(names).then(() => {
+                copyAllBtn.textContent = '已复制';
+                setTimeout(() => { copyAllBtn.textContent = '复制全部'; }, 1500);
+            });
+        }
+
+        function clearResults() {
+            results = [];
+            renderResults([]);
+        }
+
+        function setRegion(region) {
+            currentRegion = region;
+            regionSelect.value = region;
+        }
+
+        // ================================================================
+        //  6. 事件绑定
+        // ================================================================
+
+        generateBtn.addEventListener('click', generateAndRender);
+        copyAllBtn.addEventListener('click', copyAll);
+        clearBtn.addEventListener('click', clearResults);
+        addSuffixBtn.addEventListener('click', addSuffix);
+        suffixInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addSuffix(); });
+
+        regionSelect.addEventListener('change', function() {
+            currentRegion = this.value;
+            generateAndRender();
+        });
+
+        themeRandomBtn.addEventListener('click', function() {
+            const regions = Object.keys(REGION_LEXICON);
+            const random = regions[Math.floor(Math.random() * regions.length)];
+            setRegion(random);
+            generateAndRender();
+        });
+
+        [len2, len3, len4].forEach(cb => {
+            cb.addEventListener('change', generateAndRender);
+        });
+        typeChecks.forEach(cb => {
+            cb.addEventListener('change', generateAndRender);
+        });
+
+        let timeoutId = null;
+        countInput.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(generateAndRender, 300);
+        });
+
+        // ================================================================
+        //  7. 启动
+        // ================================================================
+
+        renderSuffixes();
+        generateAndRender();
+
+        console.log(' 地名站名生成器 已加载 ');
+        console.log(` 后缀库：${suffixes.length} 项`);
+        console.log(` 当前风格：${REGION_NAMES[currentRegion] || currentRegion}`);
+        console.log(' 修改参数后自动生成，按「随机风格」探索不同世界');
+    </script>
+</body>
+</html>
