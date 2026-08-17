@@ -12,6 +12,7 @@
             box-sizing: border-box;
         }
 
+        /* 主题变量（日间/夜间） */
         :root {
             --bg-primary: #0c0c0e;
             --bg-card: rgba(255, 255, 255, 0.04);
@@ -21,23 +22,50 @@
             --text-muted: #5f5b58;
             --accent: #b0a8a0;
             --accent-glow: rgba(180, 170, 160, 0.08);
-            --font-display: 'Segoe UI', 'PingFang SC', system-ui, -apple-system, sans-serif;
-            --radius: 1.6rem;
-            --radius-sm: 0.8rem;
+            --bg-control: rgba(0, 0, 0, 0.2);
+            --bg-input: rgba(0, 0, 0, 0.35);
+            --bg-result: rgba(0, 0, 0, 0.2);
+            --shadow-card: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.015) inset;
+            --particle-color: rgba(200, 190, 180, 0.3);
+            --bg-body-radial-1: rgba(180, 170, 160, 0.04);
+            --bg-body-radial-2: rgba(180, 170, 160, 0.03);
+            --select-option-bg: #1a1816;
+            --select-option-color: #f0ece8;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f0ebe6;
+            --bg-card: rgba(255, 255, 255, 0.6);
+            --border-subtle: rgba(0, 0, 0, 0.1);
+            --text-primary: #2c2a28;
+            --text-secondary: #5a5550;
+            --text-muted: #8a8580;
+            --accent: #8a7e74;
+            --accent-glow: rgba(120, 110, 100, 0.08);
+            --bg-control: rgba(0, 0, 0, 0.04);
+            --bg-input: rgba(0, 0, 0, 0.06);
+            --bg-result: rgba(0, 0, 0, 0.04);
+            --shadow-card: 0 40px 80px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+            --particle-color: rgba(100, 90, 80, 0.15);
+            --bg-body-radial-1: rgba(120, 110, 100, 0.04);
+            --bg-body-radial-2: rgba(120, 110, 100, 0.03);
+            --select-option-bg: #f0ebe6;
+            --select-option-color: #2c2a28;
         }
 
         body {
             min-height: 100vh;
             background: var(--bg-primary);
             color: var(--text-primary);
-            font-family: var(--font-display);
+            font-family: 'Segoe UI', 'PingFang SC', system-ui, -apple-system, sans-serif;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             padding: 1.8rem 1.2rem;
             background-image:
-                radial-gradient(ellipse at 20% 30%, rgba(180, 170, 160, 0.04) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(180, 170, 160, 0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 30%, var(--bg-body-radial-1) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, var(--bg-body-radial-2) 0%, transparent 50%);
+            transition: background 0.4s, color 0.3s;
         }
 
         /* 粒子背景 */
@@ -63,7 +91,8 @@
             border-radius: var(--radius);
             padding: 2.2rem 2.5rem 2.8rem;
             border: 1px solid var(--border-subtle);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.015) inset;
+            box-shadow: var(--shadow-card);
+            transition: background 0.4s, border-color 0.3s, box-shadow 0.4s;
         }
 
         @media (max-width: 780px) {
@@ -83,6 +112,7 @@
             margin-bottom: 2rem;
             padding-bottom: 1.2rem;
             border-bottom: 1px solid var(--border-subtle);
+            transition: border-color 0.3s;
         }
 
         .header-left h1 {
@@ -93,7 +123,7 @@
         }
         .header-left h1 span {
             font-weight: 600;
-            color: #d0c8c0;
+            color: var(--accent);
         }
         .header-left .sub {
             font-size: 0.8rem;
@@ -111,7 +141,7 @@
 
         .header-actions button,
         .header-actions select {
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--bg-control);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
             padding: 0.4rem 1.2rem;
@@ -127,18 +157,18 @@
         .header-actions select:hover {
             background: rgba(255, 255, 255, 0.07);
             border-color: rgba(255, 255, 255, 0.12);
-            color: #fff;
+            color: var(--text-primary);
         }
         .header-actions select option {
-            background: #1a1816;
-            color: #f0ece8;
+            background: var(--select-option-bg);
+            color: var(--select-option-color);
         }
 
-        /* 模式切换：与风格切换一致 */
+        /* 模式切换 */
         .mode-selector {
             display: flex;
             gap: 0.2rem;
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--bg-control);
             border: 1px solid var(--border-subtle);
             border-radius: 40px;
             padding: 0.1rem;
@@ -156,10 +186,27 @@
         }
         .mode-selector button.active {
             background: rgba(255, 255, 255, 0.08);
-            color: #fff;
+            color: var(--text-primary);
         }
         .mode-selector button:hover {
-            color: #fff;
+            color: var(--text-primary);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            background: var(--bg-control);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.3rem 0.8rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            line-height: 1;
+            color: var(--text-secondary);
+        }
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
         }
 
         /* 主体网格 */
@@ -184,10 +231,11 @@
         }
 
         .control-section {
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--bg-control);
             border-radius: var(--radius-sm);
             padding: 1.2rem 1.5rem 1.5rem;
             border: 1px solid var(--border-subtle);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .control-section .section-label {
@@ -214,10 +262,10 @@
         .control-row input[type="number"] {
             width: 60px;
             padding: 0.3rem 0.5rem;
-            background: rgba(0, 0, 0, 0.35);
+            background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: 30px;
-            color: #f0ece8;
+            color: var(--text-primary);
             font-size: 0.9rem;
             text-align: center;
             outline: none;
@@ -227,7 +275,6 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* 复选框组 */
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
@@ -245,17 +292,16 @@
             transition: 0.2s;
         }
         .checkbox-group label:hover {
-            color: #fff;
+            color: var(--text-primary);
         }
         .checkbox-group input[type="checkbox"] {
-            accent-color: #b0a8a0;
+            accent-color: var(--accent);
             width: 15px;
             height: 15px;
             cursor: pointer;
             opacity: 0.7;
         }
 
-        /* 后缀标签区 */
         .suffix-tags {
             display: flex;
             flex-wrap: wrap;
@@ -279,12 +325,7 @@
         }
         .suffix-tag:hover {
             background: rgba(255, 255, 255, 0.07);
-            color: #fff;
-        }
-        .suffix-tag.active {
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
         }
 
         .suffix-add-row {
@@ -295,10 +336,10 @@
         .suffix-add-row input {
             flex: 1;
             padding: 0.3rem 0.8rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: 30px;
-            color: #f0ece8;
+            color: var(--text-primary);
             font-size: 0.8rem;
             outline: none;
             min-width: 60px;
@@ -319,7 +360,7 @@
         }
         .suffix-add-row button:hover {
             background: rgba(255, 255, 255, 0.08);
-            color: #fff;
+            color: var(--text-primary);
         }
 
         .suffix-count {
@@ -328,12 +369,11 @@
             margin-top: 0.3rem;
         }
 
-        /* 生成按钮 */
         .generate-btn {
             width: 100%;
             padding: 0.9rem;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--bg-control);
+            border: 1px solid var(--border-subtle);
             border-radius: 60px;
             color: var(--text-primary);
             font-size: 1rem;
@@ -351,7 +391,6 @@
             transform: scale(1.005);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
-
         .generate-btn:active {
             transform: scale(0.98);
         }
@@ -385,7 +424,7 @@
         }
 
         .result-header .actions button {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--bg-control);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
             padding: 0.2rem 1rem;
@@ -396,10 +435,9 @@
         }
         .result-header .actions button:hover {
             background: rgba(255, 255, 255, 0.06);
-            color: #fff;
+            color: var(--text-primary);
         }
 
-        /* 结果列表 */
         .result-list {
             display: flex;
             flex-direction: column;
@@ -414,13 +452,12 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.5rem 1rem;
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--bg-result);
             border-radius: 40px;
             border: 1px solid var(--border-subtle);
             transition: 0.2s;
             font-size: 0.95rem;
         }
-
         .result-item:hover {
             background: rgba(255, 255, 255, 0.03);
             border-color: rgba(255, 255, 255, 0.08);
@@ -452,10 +489,9 @@
             transition: 0.2s;
         }
         .result-item .copy-single:hover {
-            color: #fff;
+            color: var(--text-primary);
         }
 
-        /* 线路规划区 */
         .line-plan {
             margin-top: 1.8rem;
             padding-top: 1.5rem;
@@ -474,7 +510,7 @@
             width: 100%;
             min-height: 90px;
             padding: 0.8rem 1rem;
-            background: rgba(0, 0, 0, 0.25);
+            background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-sm);
             color: var(--text-secondary);
@@ -485,7 +521,6 @@
             transition: 0.2s;
             line-height: 1.7;
         }
-
         .line-plan textarea:focus {
             border-color: rgba(255, 255, 255, 0.1);
         }
@@ -496,7 +531,6 @@
             margin-top: 0.4rem;
         }
 
-        /* 页脚 */
         .footer {
             margin-top: 2rem;
             text-align: center;
@@ -507,7 +541,6 @@
             padding-top: 1.5rem;
         }
 
-        /* 滚动条 */
         ::-webkit-scrollbar {
             width: 3px;
         }
@@ -519,7 +552,6 @@
             border-radius: 10px;
         }
 
-        /* 空状态 */
         .empty-state {
             color: var(--text-muted);
             font-size: 0.85rem;
@@ -528,7 +560,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* 响应式 */
         @media (max-width: 480px) {
             .header-left h1 {
                 font-size: 1.3rem;
@@ -557,13 +588,13 @@
     <canvas id="particles-canvas"></canvas>
 
     <!-- 主容器 -->
-    <div class="container">
+    <div class="container" id="appContainer">
 
         <!-- 头部 -->
         <header class="header">
             <div class="header-left">
                 <h1>架空<span>之名</span></h1>
-                <div class="sub" id="modeSubtitle">基于真实地名统计 · 多风格切换 · 站名模式</div>
+                <div class="sub" id="modeSubtitle">基于真实地铁站名统计 · 多风格切换 · 站名模式</div>
             </div>
             <div class="header-actions">
                 <select id="regionSelect">
@@ -579,6 +610,7 @@
                     <button class="active" data-mode="station">站名</button>
                     <button data-mode="place">地名</button>
                 </div>
+                <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式">🌙</button>
             </div>
         </header>
 
@@ -690,7 +722,10 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(200, 190, 180, ${this.opacity})`;
+                const baseColor = document.documentElement.getAttribute('data-theme') === 'light' ?
+                    'rgba(100, 90, 80, ' :
+                    'rgba(200, 190, 180, ';
+                ctx.fillStyle = baseColor + this.opacity + ')';
                 ctx.fill();
             }
         }
@@ -709,7 +744,6 @@
         //  2. 核心数据 —— 字根库已大幅扩充
         // ================================================================
 
-        // 默认后缀库
         const DEFAULT_SUFFIXES = [
             '坪', '坡', '坑', '塘', '圩', '埠', '埔', '坝', '墩', '城',
             '坊', '场', '渠', '溪', '港', '湾', '湖', '池', '洼', '沟',
@@ -721,7 +755,6 @@
             '关', '津', '堰', '沚', '汀', '渚', '岬', '嶂', '峦', '岫'
         ];
 
-        // 各风格词根库 —— 大幅度增加字根
         const REGION_LEXICON = {
             chinese: {
                 roots: ['永', '安', '宁', '平', '和', '长', '乐', '康', '泰', '祥', '瑞', '福', '德', '仁', '义', '礼', '智',
@@ -801,7 +834,6 @@
             }
         };
 
-        // 风格显示名称
         const REGION_NAMES = {
             chinese: '中式',
             japanese: '日式',
@@ -818,10 +850,11 @@
         let suffixes = [...DEFAULT_SUFFIXES];
         let results = [];
         let currentRegion = 'chinese';
-        let currentMode = 'station'; // 'station' 或 'place'
+        let currentMode = 'station';
+        let currentTheme = 'dark'; // 'dark' | 'light'
 
         // ================================================================
-        //  4. 核心生成逻辑 —— 禁止重名、叠词
+        //  4. 核心生成逻辑
         // ================================================================
 
         function pick(arr) {
@@ -829,7 +862,6 @@
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        // 检查是否包含叠词（连续相同字）
         function hasRepeatedChar(str) {
             for (let i = 0; i < str.length - 1; i++) {
                 if (str[i] === str[i + 1]) return true;
@@ -844,17 +876,14 @@
             const names = [];
             let attempts = 0;
             const maxAttempts = count * 40;
-
             const isStationMode = (mode === 'station');
 
             while (names.length < count && attempts < maxAttempts) {
                 attempts++;
                 const type = pick(types);
                 const length = pick(lengths);
-                let name = '';
                 let wordPool = [];
                 let suffix = '';
-
                 const suffixChance = isStationMode ? 0.45 : 0.20;
 
                 switch (type) {
@@ -887,8 +916,7 @@
 
                 if (length === 2) {
                     if (useSuffix) {
-                        const first = pick(wordPool);
-                        candidate = first + suffix;
+                        candidate = pick(wordPool) + suffix;
                     } else {
                         const a = pick(wordPool);
                         let b = pick(wordPool);
@@ -917,7 +945,7 @@
                         }
                         candidate = a + b + c;
                     }
-                } else { // 四字
+                } else {
                     if (useSuffix) {
                         const a = pick(wordPool);
                         let b = pick(wordPool);
@@ -958,7 +986,6 @@
                     nature: '自然',
                     mixed: '混合'
                 } [type] || '未知';
-
                 names.push({ name: candidate, type: typeLabel, length: candidate.length });
             }
 
@@ -972,7 +999,6 @@
                     names.push({ name: cand, type: '混合', length: cand.length });
                 }
             }
-
             return names;
         }
 
@@ -995,13 +1021,28 @@
         const linePlan = document.getElementById('linePlan');
         const modeSelector = document.getElementById('modeSelector');
         const modeSubtitle = document.getElementById('modeSubtitle');
+        const themeToggle = document.getElementById('themeToggle');
 
         const len2 = document.getElementById('len2');
         const len3 = document.getElementById('len3');
         const len4 = document.getElementById('len4');
         const typeChecks = document.querySelectorAll('.type-check');
 
-        // --- 模式切换：与风格切换一致（按钮组） ---
+        // --- 主题切换 ---
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : '');
+            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+            // 粒子颜色跟随主题，重新绘制
+            particles.forEach(p => p.opacity = Math.random() * 0.3 + 0.05);
+        }
+
+        themeToggle.addEventListener('click', function() {
+            const next = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+        });
+
+        // --- 模式切换 ---
         modeSelector.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', function() {
                 modeSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
@@ -1011,7 +1052,6 @@
                 modeSubtitle.textContent = currentMode === 'station' ?
                     '基于真实地铁站名统计 · 多风格切换 · 站名模式' :
                     '基于真实地名统计 · 多风格切换 · 地名模式';
-                // 切换模式后自动生成（但会校验）
                 generateAndRender();
             });
         });
@@ -1035,16 +1075,12 @@
             suffixInput.value = '';
         }
 
-        // 获取选中的类型，若全不选则返回空数组
         function getSelectedTypes() {
             const selected = [];
-            typeChecks.forEach(cb => {
-                if (cb.checked) selected.push(cb.value);
-            });
+            typeChecks.forEach(cb => { if (cb.checked) selected.push(cb.value); });
             return selected;
         }
 
-        // 获取选中的字数，若全不选则返回空数组
         function getSelectedLengths() {
             const lengths = [];
             if (len2.checked) lengths.push(2);
@@ -1053,27 +1089,19 @@
             return lengths;
         }
 
-        // 检查是否有任何选项被勾选（类型或字数）
         function hasAnySelection() {
-            const types = getSelectedTypes();
-            const lengths = getSelectedLengths();
-            return types.length > 0 && lengths.length > 0;
+            return getSelectedTypes().length > 0 && getSelectedLengths().length > 0;
         }
 
         function generateAndRender() {
-            // 校验：如果没有任何勾选，弹窗提示并返回
             if (!hasAnySelection()) {
                 alert('生成失败，请先勾选/设置提供的功能');
                 return;
             }
-
             const count = parseInt(countInput.value) || 20;
             const types = getSelectedTypes();
             const lengths = getSelectedLengths();
-            const region = currentRegion;
-            const mode = currentMode;
-
-            const names = generateNames(count, types, lengths, region, mode);
+            const names = generateNames(count, types, lengths, currentRegion, currentMode);
             results = names;
             renderResults(names);
         }
@@ -1084,7 +1112,6 @@
                 resultCount.textContent = '0';
                 return;
             }
-
             resultList.innerHTML = names.map((item, index) =>
                 `<div class="result-item">
                     <span class="name">${item.name}</span>
@@ -1095,9 +1122,7 @@
                     </div>
                 </div>`
             ).join('');
-
             resultCount.textContent = names.length;
-
             document.querySelectorAll('.copy-single').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const idx = parseInt(this.dataset.index);
@@ -1171,15 +1196,12 @@
         // ================================================================
 
         renderSuffixes();
-        // 初始状态：所有复选框不勾选，因此首次加载时显示空状态，并提示
-        // 但为了不显得空，我们保留空状态，用户勾选后自动生成
-        // 但也可以放一个示例：但根据需求，不勾选任何东西时点击生成会弹窗，所以我们让初始为空
-        // 但为了友好，我们清空结果并显示提示
         results = [];
         renderResults([]);
-        // 但用户勾选后会自动触发生成
+        // 默认日间模式
+        setTheme('light');
 
-        console.log(' 地名站名生成器 已加载 (去重+防叠词+字根扩充)');
+        console.log(' 地名站名生成器 已加载 (含日间/夜间切换)');
         console.log(` 后缀库：${suffixes.length} 项`);
         console.log(` 当前风格：${REGION_NAMES[currentRegion] || currentRegion}`);
         console.log(` 当前模式：${currentMode === 'station' ? '站名' : '地名'}`);
