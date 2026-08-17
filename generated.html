@@ -31,6 +31,8 @@
             --bg-body-radial-2: rgba(180, 170, 160, 0.03);
             --select-option-bg: #1a1816;
             --select-option-color: #f0ece8;
+            --nav-bg: rgba(0, 0, 0, 0.3);
+            --nav-hover: rgba(255, 255, 255, 0.06);
         }
 
         [data-theme="light"] {
@@ -51,6 +53,8 @@
             --bg-body-radial-2: rgba(120, 110, 100, 0.03);
             --select-option-bg: #f0ebe6;
             --select-option-color: #2c2a28;
+            --nav-bg: rgba(255, 255, 255, 0.3);
+            --nav-hover: rgba(0, 0, 0, 0.04);
         }
 
         body {
@@ -89,7 +93,7 @@
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border-radius: var(--radius);
-            padding: 2.2rem 2.5rem 2.8rem;
+            padding: 0 2.5rem 2.8rem;
             border: 1px solid var(--border-subtle);
             box-shadow: var(--shadow-card);
             transition: background 0.4s, border-color 0.3s, box-shadow 0.4s;
@@ -97,12 +101,73 @@
 
         @media (max-width: 780px) {
             .container {
-                padding: 1.5rem 1.2rem 2rem;
+                padding: 0 1.2rem 2rem;
                 border-radius: 1.2rem;
             }
         }
 
-        /* 头部 */
+        /* ===== 顶部导航栏 ===== */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            padding: 0.8rem 0 0.6rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-wrap: wrap;
+            transition: border-color 0.3s;
+        }
+
+        .top-nav .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            margin-right: 0.5rem;
+            text-decoration: none;
+        }
+        .top-nav .brand span {
+            font-weight: 300;
+            color: var(--text-secondary);
+        }
+
+        .top-nav .nav-links {
+            display: flex;
+            gap: 0.2rem;
+            flex-wrap: wrap;
+        }
+
+        .top-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            transition: 0.25s;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .top-nav .nav-links a:hover {
+            color: var(--text-primary);
+            background: var(--nav-hover);
+            border-color: var(--border-subtle);
+        }
+
+        .top-nav .nav-links a.active {
+            color: var(--text-primary);
+            background: var(--nav-hover);
+            border-color: var(--border-subtle);
+        }
+
+        .top-nav .nav-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        /* 头部（原header改为内嵌） */
         .header {
             display: flex;
             justify-content: space-between;
@@ -579,6 +644,13 @@
             .suffix-tags {
                 max-height: 70px;
             }
+            .top-nav {
+                gap: 0.6rem;
+            }
+            .top-nav .nav-actions {
+                margin-left: 0;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -590,8 +662,22 @@
     <!-- 主容器 -->
     <div class="container" id="appContainer">
 
+        <!-- ===== 顶部导航栏 ===== -->
+        <nav class="top-nav">
+            <a href="#" class="brand">架空<span>之名</span></a>
+            <div class="nav-links">
+                <a href="#section-generate" class="active">生成器</a>
+                <a href="#section-suffix">后缀库</a>
+                <a href="#section-plan">规划</a>
+                <a href="#section-about">关于</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式">🌙</button>
+            </div>
+        </nav>
+
         <!-- 头部 -->
-        <header class="header">
+        <header class="header" id="section-generate">
             <div class="header-left">
                 <h1>架空<span>之名</span></h1>
                 <div class="sub" id="modeSubtitle">基于真实地铁站名统计 · 多风格切换 · 站名模式</div>
@@ -610,7 +696,6 @@
                     <button class="active" data-mode="station">站名</button>
                     <button data-mode="place">地名</button>
                 </div>
-                <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式">🌙</button>
             </div>
         </header>
 
@@ -638,7 +723,7 @@
                 </div>
 
                 <!-- 字数与后缀库 -->
-                <div class="control-section">
+                <div class="control-section" id="section-suffix">
                     <div class="section-label">字数与后缀库</div>
                     <div class="control-row">
                         <label><input type="checkbox" id="len2" /> 两字</label>
@@ -676,7 +761,7 @@
                 </div>
 
                 <!-- 线路规划区 -->
-                <div class="line-plan">
+                <div class="line-plan" id="section-plan">
                     <div class="section-label">未来规划</div>
                     <textarea id="linePlan" placeholder="规划项目：将导入的AARC存档中的站名全部提取"></textarea>
                     <div class="hint">还在施工，这一段我想适配或允许将AARC存档导入转换成站名</div>
@@ -685,7 +770,7 @@
 
         </div>
 
-        <div class="footer">架空之名 · 究极至尊版 · 持续迭代中</div>
+        <div class="footer" id="section-about">架空之名 · 究极至尊版 · 持续迭代中</div>
     </div>
 
     <script>
@@ -741,7 +826,7 @@
         animateParticles();
 
         // ================================================================
-        //  2. 核心数据 —— 字根库已大幅扩充
+        //  2. 核心数据
         // ================================================================
 
         const DEFAULT_SUFFIXES = [
@@ -851,7 +936,7 @@
         let results = [];
         let currentRegion = 'chinese';
         let currentMode = 'station';
-        let currentTheme = 'dark'; // 'dark' | 'light'
+        let currentTheme = 'dark';
 
         // ================================================================
         //  4. 核心生成逻辑
@@ -1028,12 +1113,28 @@
         const len4 = document.getElementById('len4');
         const typeChecks = document.querySelectorAll('.type-check');
 
+        // --- 导航栏链接高亮与平滑跳转 ---
+        document.querySelectorAll('.top-nav .nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId && targetId.startsWith('#')) {
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+                // 高亮当前
+                document.querySelectorAll('.top-nav .nav-links a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
         // --- 主题切换 ---
         function setTheme(theme) {
             currentTheme = theme;
             document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : '');
             themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
-            // 粒子颜色跟随主题，重新绘制
             particles.forEach(p => p.opacity = Math.random() * 0.3 + 0.05);
         }
 
@@ -1198,14 +1299,12 @@
         renderSuffixes();
         results = [];
         renderResults([]);
-        // 默认日间模式
-        setTheme('light');
+        setTheme('dark');
 
-        console.log(' 地名站名生成器 已加载 (含日间/夜间切换)');
+        console.log(' 地名站名生成器 已加载 (含顶部导航栏)');
         console.log(` 后缀库：${suffixes.length} 项`);
         console.log(` 当前风格：${REGION_NAMES[currentRegion] || currentRegion}`);
         console.log(` 当前模式：${currentMode === 'station' ? '站名' : '地名'}`);
-        console.log(' 所有可勾选项默认为不勾选，未勾选时点击生成会弹出提示');
     </script>
 </body>
 </html>
