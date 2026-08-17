@@ -106,6 +106,7 @@
             display: flex;
             gap: 0.6rem;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .header-actions button,
@@ -131,6 +132,34 @@
         .header-actions select option {
             background: #1a1816;
             color: #f0ece8;
+        }
+
+        /* 模式切换：与风格切换一致 */
+        .mode-selector {
+            display: flex;
+            gap: 0.2rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.1rem;
+        }
+        .mode-selector button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: inherit;
+        }
+        .mode-selector button.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .mode-selector button:hover {
+            color: #fff;
         }
 
         /* 主体网格 */
@@ -534,7 +563,7 @@
         <header class="header">
             <div class="header-left">
                 <h1>架空<span>之名</span></h1>
-                <div class="sub">基于真实地铁站名统计 · 多风格切换 · 究极至尊版</div>
+                <div class="sub" id="modeSubtitle">基于真实地名统计 · 多风格切换 · 站名模式</div>
             </div>
             <div class="header-actions">
                 <select id="regionSelect">
@@ -546,6 +575,10 @@
                     <option value="wasteland">废土</option>
                 </select>
                 <button id="themeRandomBtn">随机风格</button>
+                <div class="mode-selector" id="modeSelector">
+                    <button class="active" data-mode="station">站名</button>
+                    <button data-mode="place">地名</button>
+                </div>
             </div>
         </header>
 
@@ -564,11 +597,11 @@
                         <label style="margin-left:0.6rem;">站名类型</label>
                     </div>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" class="type-check" value="road" checked /> 路名型</label>
-                        <label><input type="checkbox" class="type-check" value="landmark" checked /> 地标型</label>
-                        <label><input type="checkbox" class="type-check" value="district" checked /> 片区型</label>
-                        <label><input type="checkbox" class="type-check" value="nature" checked /> 自然地貌</label>
-                        <label><input type="checkbox" class="type-check" value="mixed" checked /> 混合随机</label>
+                        <label><input type="checkbox" class="type-check" value="road" /> 路名型</label>
+                        <label><input type="checkbox" class="type-check" value="landmark" /> 地标型</label>
+                        <label><input type="checkbox" class="type-check" value="district" /> 片区型</label>
+                        <label><input type="checkbox" class="type-check" value="nature" /> 自然地貌</label>
+                        <label><input type="checkbox" class="type-check" value="mixed" /> 混合随机</label>
                     </div>
                 </div>
 
@@ -576,9 +609,9 @@
                 <div class="control-section">
                     <div class="section-label">字数与后缀库</div>
                     <div class="control-row">
-                        <label><input type="checkbox" id="len2" checked /> 两字</label>
-                        <label><input type="checkbox" id="len3" checked /> 三字</label>
-                        <label><input type="checkbox" id="len4" checked /> 四字</label>
+                        <label><input type="checkbox" id="len2" /> 两字</label>
+                        <label><input type="checkbox" id="len3" /> 三字</label>
+                        <label><input type="checkbox" id="len4" /> 四字</label>
                     </div>
 
                     <div class="suffix-tags" id="suffixTags">
@@ -599,7 +632,7 @@
             <!-- 右侧结果 -->
             <div class="result-area">
                 <div class="result-header">
-                    <span class="count">已生成：<strong id="resultCount">0</strong> 个站名</span>
+                    <span class="count">已生成：<strong id="resultCount">0</strong> 个</span>
                     <div class="actions">
                         <button id="copyAllBtn">复制全部</button>
                         <button id="clearBtn">清空</button>
@@ -673,7 +706,7 @@
         animateParticles();
 
         // ================================================================
-        //  2. 核心数据
+        //  2. 核心数据 —— 字根库已大幅扩充
         // ================================================================
 
         // 默认后缀库
@@ -684,68 +717,87 @@
             '岭', '集', '棚', '楼', '桥', '村', '矶', '口', '园', '围',
             '府', '庄', '店', '庙', '巷', '路', '街', '陂', '陵', '寺',
             '祠', '寨', '营', '苑', '郭', '铺', '堂', '镇', '角', '里',
-            '台', '户', '丘', '井', '屯', '门', '卫', '甸'
+            '台', '户', '丘', '井', '屯', '门', '卫', '甸', '驿', '堡',
+            '关', '津', '堰', '沚', '汀', '渚', '岬', '嶂', '峦', '岫'
         ];
 
-        // 各风格词根库
+        // 各风格词根库 —— 大幅度增加字根
         const REGION_LEXICON = {
             chinese: {
                 roots: ['永', '安', '宁', '平', '和', '长', '乐', '康', '泰', '祥', '瑞', '福', '德', '仁', '义', '礼', '智',
                     '信', '云', '山', '水', '月', '风', '雨', '雪', '霞', '林', '竹', '梅', '兰', '松', '柳', '荷', '溪', '涧', '谷',
                     '峰', '岭', '川', '泽', '湖', '海', '江', '河', '泊', '青', '白', '碧', '翠', '苍', '玄', '素', '丹', '紫', '金',
-                    '玉', '灵', '仙', '圣', '隐', '逸', '清', '明', '太'
+                    '玉', '灵', '仙', '圣', '隐', '逸', '清', '明', '太', '锦', '绣', '华', '丰', '裕', '昌', '盛', '茂', '蔚', '岚',
+                    '霁', '霜', '露', '虹', '雯', '霭', '昶', '昱', '晨', '曦', '昭', '曜', '璇', '玑', '瑜', '琅', '瑶', '璞', '珑'
                 ],
-                roadWords: ['大', '中', '华', '兴', '盛', '世', '通', '达', '顺', '畅', '广', '新', '建', '民', '生'],
-                landmarkWords: ['公园', '广场', '中心', '大厦', '剧院', '体育馆', '博物馆', '图书馆', '车站', '机场', '码头', '大桥', '隧道'],
-                districtWords: ['村', '街', '巷', '里', '弄', '坊', '庄', '屯', '营', '寨', '堡', '驿', '关', '镇', '乡'],
-                natureWords: ['山', '河', '湖', '海', '江', '溪', '涧', '峰', '岭', '崖', '川', '泽', '洲', '岛', '湾', '港', '滩']
+                roadWords: ['大', '中', '华', '兴', '盛', '世', '通', '达', '顺', '畅', '广', '新', '建', '民', '生', '正', '直', '宏',
+                    '阔', '康', '庄'
+                ],
+                landmarkWords: ['公园', '广场', '中心', '大厦', '剧院', '体育馆', '博物馆', '图书馆', '车站', '机场', '码头', '大桥', '隧道',
+                    '古塔', '钟楼', '殿堂', '会馆'
+                ],
+                districtWords: ['村', '街', '巷', '里', '弄', '坊', '庄', '屯', '营', '寨', '堡', '驿', '关', '镇', '乡', '邑', '郡',
+                    '闾', '闬'
+                ],
+                natureWords: ['山', '河', '湖', '海', '江', '溪', '涧', '峰', '岭', '崖', '川', '泽', '洲', '岛', '湾', '港', '滩',
+                    '岬', '峡', '汊'
+                ]
             },
             japanese: {
                 roots: ['樱', '枫', '竹', '梅', '松', '鹤', '鹿', '狐', '月', '星', '霞', '雾', '雪', '雨', '风', '林', '川', '谷',
-                    '海', '岬', '青', '赤', '白', '紫', '金', '银', '翠', '茜', '绯', '绀', '萌', '浅', '深', '早', '晚', '朝', '夜'
+                    '海', '岬', '青', '赤', '白', '紫', '金', '银', '翠', '茜', '绯', '绀', '萌', '浅', '深', '早', '晚', '朝', '夜',
+                    '华', '凛', '绚', '耀', '煌', '碧', '滝', '湊', '浦', '浜', '原', '野', '森', '丘', '崎', '津', '湾', '汐', '凪',
+                    '雫', '紬', '柚', '杏', '楠', '榊', '桧', '桐'
                 ],
-                roadWords: ['大', '中', '本', '通', '目', '番', '町', '丁', '目'],
-                landmarkWords: ['神社', '寺庙', '公园', '广场', '塔', '阁', '馆', '站', '港', '桥', '台'],
-                districtWords: ['町', '村', '驿', '台', '丘', '崎', '津', '浦', '浜', '原', '野', '森', '谷'],
-                natureWords: ['山', '川', '岬', '浦', '浜', '原', '野', '森', '丘', '谷', '峡', '岛', '崎', '津', '湾']
+                roadWords: ['大', '中', '本', '通', '目', '番', '町', '丁', '目', '筋', '横', '御'],
+                landmarkWords: ['神社', '寺庙', '公园', '广场', '塔', '阁', '馆', '站', '港', '桥', '台', '城', '砦', '灯台'],
+                districtWords: ['町', '村', '驿', '台', '丘', '崎', '津', '浦', '浜', '原', '野', '森', '谷', '里', '郷', '社'],
+                natureWords: ['山', '川', '岬', '浦', '浜', '原', '野', '森', '丘', '谷', '峡', '岛', '崎', '津', '湾', '峰', '滝']
             },
             western: {
                 roots: ['艾', '贝', '西', '洛', '兰', '德', '维', '克', '特', '雷', '安', '鲁', '菲', '尔', '顿', '林', '伍', '堡',
-                    '斯', '塔', '福', '桥', '港', '湾', '山', '湖', '河', '谷'
+                    '斯', '塔', '福', '桥', '港', '湾', '山', '湖', '河', '谷', '格', '莱', '姆', '弗', '欧', '珀', '丹', '尼', '斯',
+                    '蒂', '芙', '洛', '丽', '梅', '达', '温', '诺', '亚', '塞', '恩', '瑞', '昂'
                 ],
-                roadWords: ['主', '大', '中央', '国王', '皇后', '公园', '花园', '大道', '街'],
-                landmarkWords: ['城堡', '大教堂', '广场', '市场', '剧院', '码头', '灯塔', '桥梁', '站'],
-                districtWords: ['村', '镇', '区', '郡', '城', '堡', '港', '湾', '谷', '山'],
-                natureWords: ['山', '湖', '河', '谷', '湾', '峰', '峡', '岛', '角', '岬']
+                roadWords: ['主', '大', '中央', '国王', '皇后', '公园', '花园', '大道', '街', '林荫', '皇室', '自由'],
+                landmarkWords: ['城堡', '大教堂', '广场', '市场', '剧院', '码头', '灯塔', '桥梁', '站', '宫', '议会', '塔'],
+                districtWords: ['村', '镇', '区', '郡', '城', '堡', '港', '湾', '谷', '山', '地', '畔', '丘'],
+                natureWords: ['山', '湖', '河', '谷', '湾', '峰', '峡', '岛', '角', '岬', '溪', '林', '野']
             },
             cyber: {
                 roots: ['零', '芯', '磁', '光', '网', '频', '码', '云', '界', '域', '数', '智', '核', '晶', '脉', '链', '矩', '阵',
-                    '幻', '霓'
+                    '幻', '霓', '涡', '弦', '辐', '跃', '闪', '聚', '能', '恒', '动', '跃', '溯', '逸', '枢', '枢', '擎', '宙', '辰',
+                    '冥', '荧', '燎'
                 ],
-                roadWords: ['超', '极', '虚', '幻', '影', '光', '电', '磁', '量', '子', '熵', '暗', '幽', '脉', '频'],
-                landmarkWords: ['中心', '枢纽', '塔', '港', '站', '核', '脉', '云', '界', '所', '库', '端', '堡'],
-                districtWords: ['区', '域', '层', '带', '环', '圈', '网', '云'],
-                natureWords: ['流', '波', '光', '影', '雾', '汐', '潮', '镜', '虚']
+                roadWords: ['超', '极', '虚', '幻', '影', '光', '电', '磁', '量', '子', '熵', '暗', '幽', '脉', '频', '能', '讯', '跃'],
+                landmarkWords: ['中心', '枢纽', '塔', '港', '站', '核', '脉', '云', '界', '所', '库', '端', '堡', '穹', '桥'],
+                districtWords: ['区', '域', '层', '带', '环', '圈', '网', '云', '境', '维', '元'],
+                natureWords: ['流', '波', '光', '影', '雾', '汐', '潮', '镜', '虚', '渊', '渊', '汐', '岚']
             },
             fantasy: {
                 roots: ['霜', '焰', '风', '雷', '龙', '狮', '鹰', '狼', '鹿', '熊', '鸦', '星', '辰', '月', '日', '辉', '影', '魂',
-                    '灵', '魔'
+                    '灵', '魔', '玄', '幽', '冥', '岚', '炽', '皓', '曜', '曦', '暮', '曙', '永', '无', '极', '苍', '碧', '曜', '绛',
+                    '绯', '黛', '霜', '霰'
                 ],
-                roadWords: ['圣', '暗', '炎', '冰', '金', '银', '翠', '琥珀', '赤', '青', '玄', '白', '灰', '暮', '曙', '永', '无'],
+                roadWords: ['圣', '暗', '炎', '冰', '金', '银', '翠', '琥珀', '赤', '青', '玄', '白', '灰', '暮', '曙', '永', '无',
+                    '秘', '铸'
+                ],
                 landmarkWords: ['堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠',
-                    '雪原'
+                    '雪原', '祭坛', '圣殿', '方尖碑'
                 ],
-                districtWords: ['城', '镇', '村', '堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭'],
-                natureWords: ['山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠', '雪原', '峡', '谷']
+                districtWords: ['城', '镇', '村', '堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭', '域', '领', '境'],
+                natureWords: ['山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠', '雪原', '峡', '谷', '裂', '渊', '雾']
             },
             wasteland: {
                 roots: ['锈', '骨', '沙', '尘', '铁', '钢', '废', '墟', '裂', '烬', '灰', '荒', '孤', '哨', '堡', '驿', '途', '漠',
-                    '岩', '陷'
+                    '岩', '陷', '残', '蚀', '葬', '骸', '棘', '棘', '砾', '焦', '炭', '硝', '烟', '墟', '城', '壁'
                 ],
-                roadWords: ['锈蚀', '枯骨', '沙暴', '铁锈', '钢骨', '废土', '废墟', '裂痕', '余烬', '灰烬', '荒芜', '孤寂', '哨站'],
-                landmarkWords: ['堡', '站', '驿', '镇', '墟', '城', '据点', '营地', '哨塔', '仓库', '工厂', '铁路'],
-                districtWords: ['区', '域', '层', '带', '圈', '地', '墟', '镇', '堡'],
-                natureWords: ['河', '岭', '沙', '尘', '谷', '裂', '漠', '岩', '石']
+                roadWords: ['锈蚀', '枯骨', '沙暴', '铁锈', '钢骨', '废土', '废墟', '裂痕', '余烬', '灰烬', '荒芜', '孤寂', '哨站', '尘暴',
+                    '硬核'
+                ],
+                landmarkWords: ['堡', '站', '驿', '镇', '墟', '城', '据点', '营地', '哨塔', '仓库', '工厂', '铁路', '水塔', '岗哨'],
+                districtWords: ['区', '域', '层', '带', '圈', '地', '墟', '镇', '堡', '隅', '界'],
+                natureWords: ['河', '岭', '沙', '尘', '谷', '裂', '漠', '岩', '石', '丘', '坑', '隙']
             }
         };
 
@@ -766,9 +818,10 @@
         let suffixes = [...DEFAULT_SUFFIXES];
         let results = [];
         let currentRegion = 'chinese';
+        let currentMode = 'station'; // 'station' 或 'place'
 
         // ================================================================
-        //  4. 核心生成逻辑
+        //  4. 核心生成逻辑 —— 禁止重名、叠词
         // ================================================================
 
         function pick(arr) {
@@ -776,27 +829,43 @@
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        function generateNames(count, types, lengths, region) {
+        // 检查是否包含叠词（连续相同字）
+        function hasRepeatedChar(str) {
+            for (let i = 0; i < str.length - 1; i++) {
+                if (str[i] === str[i + 1]) return true;
+            }
+            return false;
+        }
+
+        function generateNames(count, types, lengths, region, mode) {
             const lexicon = REGION_LEXICON[region] || REGION_LEXICON.chinese;
             const allSuffixes = suffixes.length > 0 ? suffixes : DEFAULT_SUFFIXES;
+            const nameSet = new Set();
             const names = [];
+            let attempts = 0;
+            const maxAttempts = count * 40;
 
-            for (let i = 0; i < count; i++) {
+            const isStationMode = (mode === 'station');
+
+            while (names.length < count && attempts < maxAttempts) {
+                attempts++;
                 const type = pick(types);
                 const length = pick(lengths);
                 let name = '';
-
                 let wordPool = [];
                 let suffix = '';
+
+                const suffixChance = isStationMode ? 0.45 : 0.20;
 
                 switch (type) {
                     case 'road':
                         wordPool = lexicon.roadWords || lexicon.roots;
-                        suffix = '路';
+                        suffix = isStationMode ? '路' : pick(['路', '街', '道', '巷']);
                         break;
                     case 'landmark':
                         wordPool = lexicon.landmarkWords || lexicon.roots;
-                        suffix = pick(['公园', '广场', '中心', '塔', '站', '港', '桥']);
+                        suffix = isStationMode ? pick(['公园', '广场', '中心', '塔', '站', '港', '桥', '宫', '殿', '阁']) :
+                            pick(['公园', '广场', '中心', '塔', '宫', '殿', '阁', '楼', '台', '亭']);
                         break;
                     case 'district':
                         wordPool = lexicon.districtWords || lexicon.roots;
@@ -813,32 +882,75 @@
                         break;
                 }
 
+                let candidate = '';
+                const useSuffix = Math.random() < suffixChance && suffix;
+
                 if (length === 2) {
-                    if (Math.random() > 0.4 && suffix) {
-                        name = pick(wordPool) + suffix;
+                    if (useSuffix) {
+                        const first = pick(wordPool);
+                        candidate = first + suffix;
                     } else {
-                        name = pick(wordPool) + pick(wordPool);
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let safety = 0;
+                        while (a === b && safety < 20) { b = pick(wordPool);
+                            safety++; }
+                        candidate = a + b;
                     }
                 } else if (length === 3) {
-                    if (Math.random() > 0.3 && suffix) {
-                        name = pick(wordPool) + pick(wordPool) + suffix;
+                    if (useSuffix) {
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let safety = 0;
+                        while (a === b && safety < 20) { b = pick(wordPool);
+                            safety++; }
+                        candidate = a + b + suffix;
                     } else {
-                        name = pick(wordPool) + pick(wordPool) + pick(wordPool);
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let c = pick(wordPool);
+                        let safety = 0;
+                        while ((a === b || b === c || a === c) && safety < 30) {
+                            b = pick(wordPool);
+                            c = pick(wordPool);
+                            safety++;
+                        }
+                        candidate = a + b + c;
                     }
-                } else {
-                    if (Math.random() > 0.3 && suffix) {
-                        name = pick(wordPool) + pick(wordPool) + pick(wordPool) + suffix;
+                } else { // 四字
+                    if (useSuffix) {
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let c = pick(wordPool);
+                        let safety = 0;
+                        while ((a === b || b === c || a === c) && safety < 30) {
+                            b = pick(wordPool);
+                            c = pick(wordPool);
+                            safety++;
+                        }
+                        candidate = a + b + c + suffix;
                     } else {
-                        name = pick(wordPool) + pick(wordPool) + pick(wordPool) + pick(wordPool);
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let c = pick(wordPool);
+                        let d = pick(wordPool);
+                        let safety = 0;
+                        while ((a === b || b === c || c === d || a === c || a === d || b === d) && safety < 40) {
+                            b = pick(wordPool);
+                            c = pick(wordPool);
+                            d = pick(wordPool);
+                            safety++;
+                        }
+                        candidate = a + b + c + d;
                     }
                 }
 
-                if (name.length < 2) name = pick(wordPool) + pick(allSuffixes);
+                if (candidate.length < 2) continue;
+                if (hasRepeatedChar(candidate)) continue;
+                if (nameSet.has(candidate)) continue;
+                if (allSuffixes.includes(candidate) || allSuffixes.some(suf => candidate === suf)) continue;
 
-                if (name.length > length) {
-                    name = name.slice(0, length);
-                }
-
+                nameSet.add(candidate);
                 const typeLabel = {
                     road: '路名',
                     landmark: '地标',
@@ -847,7 +959,18 @@
                     mixed: '混合'
                 } [type] || '未知';
 
-                names.push({ name, type: typeLabel, length: name.length });
+                names.push({ name: candidate, type: typeLabel, length: candidate.length });
+            }
+
+            let fallbackPool = lexicon.roots.slice();
+            while (names.length < count && fallbackPool.length > 0) {
+                const base = fallbackPool.pop();
+                const suf = pick(allSuffixes);
+                const cand = base + suf;
+                if (!nameSet.has(cand) && cand.length >= 2 && !hasRepeatedChar(cand) && !allSuffixes.includes(cand)) {
+                    nameSet.add(cand);
+                    names.push({ name: cand, type: '混合', length: cand.length });
+                }
             }
 
             return names;
@@ -870,11 +993,28 @@
         const regionSelect = document.getElementById('regionSelect');
         const themeRandomBtn = document.getElementById('themeRandomBtn');
         const linePlan = document.getElementById('linePlan');
+        const modeSelector = document.getElementById('modeSelector');
+        const modeSubtitle = document.getElementById('modeSubtitle');
 
         const len2 = document.getElementById('len2');
         const len3 = document.getElementById('len3');
         const len4 = document.getElementById('len4');
         const typeChecks = document.querySelectorAll('.type-check');
+
+        // --- 模式切换：与风格切换一致（按钮组） ---
+        modeSelector.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                modeSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMode = this.dataset.mode;
+                generateBtn.textContent = currentMode === 'station' ? '生成站名' : '生成地名';
+                modeSubtitle.textContent = currentMode === 'station' ?
+                    '基于真实地铁站名统计 · 多风格切换 · 站名模式' :
+                    '基于真实地名统计 · 多风格切换 · 地名模式';
+                // 切换模式后自动生成（但会校验）
+                generateAndRender();
+            });
+        });
 
         function renderSuffixes() {
             suffixTags.innerHTML = suffixes.map(s =>
@@ -895,46 +1035,52 @@
             suffixInput.value = '';
         }
 
+        // 获取选中的类型，若全不选则返回空数组
         function getSelectedTypes() {
             const selected = [];
             typeChecks.forEach(cb => {
                 if (cb.checked) selected.push(cb.value);
             });
-            if (selected.length === 0) {
-                typeChecks.forEach(cb => cb.checked = true);
-                return ['road', 'landmark', 'district', 'nature', 'mixed'];
-            }
             return selected;
         }
 
+        // 获取选中的字数，若全不选则返回空数组
         function getSelectedLengths() {
             const lengths = [];
             if (len2.checked) lengths.push(2);
             if (len3.checked) lengths.push(3);
             if (len4.checked) lengths.push(4);
-            if (lengths.length === 0) {
-                len2.checked = true;
-                len3.checked = true;
-                len4.checked = true;
-                return [2, 3, 4];
-            }
             return lengths;
         }
 
+        // 检查是否有任何选项被勾选（类型或字数）
+        function hasAnySelection() {
+            const types = getSelectedTypes();
+            const lengths = getSelectedLengths();
+            return types.length > 0 && lengths.length > 0;
+        }
+
         function generateAndRender() {
+            // 校验：如果没有任何勾选，弹窗提示并返回
+            if (!hasAnySelection()) {
+                alert('生成失败，请先勾选/设置提供的功能');
+                return;
+            }
+
             const count = parseInt(countInput.value) || 20;
             const types = getSelectedTypes();
             const lengths = getSelectedLengths();
             const region = currentRegion;
+            const mode = currentMode;
 
-            const names = generateNames(count, types, lengths, region);
+            const names = generateNames(count, types, lengths, region, mode);
             results = names;
             renderResults(names);
         }
 
         function renderResults(names) {
             if (!names || names.length === 0) {
-                resultList.innerHTML = `<div class="empty-state">点击「生成站名」开始创建</div>`;
+                resultList.innerHTML = `<div class="empty-state">点击「${generateBtn.textContent}」开始创建</div>`;
                 resultCount.textContent = '0';
                 return;
             }
@@ -1025,12 +1171,19 @@
         // ================================================================
 
         renderSuffixes();
-        generateAndRender();
+        // 初始状态：所有复选框不勾选，因此首次加载时显示空状态，并提示
+        // 但为了不显得空，我们保留空状态，用户勾选后自动生成
+        // 但也可以放一个示例：但根据需求，不勾选任何东西时点击生成会弹窗，所以我们让初始为空
+        // 但为了友好，我们清空结果并显示提示
+        results = [];
+        renderResults([]);
+        // 但用户勾选后会自动触发生成
 
-        console.log(' 地名站名生成器 已加载 ');
+        console.log(' 地名站名生成器 已加载 (去重+防叠词+字根扩充)');
         console.log(` 后缀库：${suffixes.length} 项`);
         console.log(` 当前风格：${REGION_NAMES[currentRegion] || currentRegion}`);
-        console.log(' 修改参数后自动生成，按「随机风格」探索不同世界');
+        console.log(` 当前模式：${currentMode === 'station' ? '站名' : '地名'}`);
+        console.log(' 所有可勾选项默认为不勾选，未勾选时点击生成会弹出提示');
     </script>
 </body>
 </html>
