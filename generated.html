@@ -31,8 +31,12 @@
             --bg-body-radial-2: rgba(180, 170, 160, 0.03);
             --select-option-bg: #1a1816;
             --select-option-color: #f0ece8;
-            --nav-bg: rgba(0, 0, 0, 0.3);
+            --nav-bg: rgba(0, 0, 0, 0.25);
             --nav-hover: rgba(255, 255, 255, 0.06);
+            --dropdown-bg: rgba(20, 20, 22, 0.92);
+            --dropdown-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            --radius: 1.6rem;
+            --radius-sm: 0.8rem;
         }
 
         [data-theme="light"] {
@@ -55,6 +59,8 @@
             --select-option-color: #2c2a28;
             --nav-bg: rgba(255, 255, 255, 0.3);
             --nav-hover: rgba(0, 0, 0, 0.04);
+            --dropdown-bg: rgba(240, 235, 230, 0.92);
+            --dropdown-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
         }
 
         body {
@@ -65,7 +71,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 1.8rem 1.2rem;
+            padding: 1.2rem 1.2rem;
             background-image:
                 radial-gradient(ellipse at 20% 30%, var(--bg-body-radial-1) 0%, transparent 60%),
                 radial-gradient(ellipse at 80% 70%, var(--bg-body-radial-2) 0%, transparent 50%);
@@ -106,68 +112,231 @@
             }
         }
 
-        /* ===== 顶部导航栏 ===== */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            gap: 1.8rem;
-            padding: 0.8rem 0 0.6rem;
+        /* ============================================================ */
+        /* 导航栏 · 居中 · 带“工具”下拉子菜单                          */
+        /* ============================================================ */
+        .main-nav {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 60px;
+            border: 1px solid var(--border-subtle);
+            padding: 0.2rem 1.2rem;
             margin-bottom: 1.2rem;
-            border-bottom: 1px solid var(--border-subtle);
-            flex-wrap: wrap;
-            transition: border-color 0.3s;
+            transition: background 0.3s, border-color 0.3s;
         }
 
-        .top-nav .brand {
-            font-size: 1.1rem;
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-brand .brand-link {
+            font-size: 1.05rem;
             font-weight: 600;
             color: var(--accent);
-            letter-spacing: 0.5px;
-            margin-right: 0.5rem;
             text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
-        .top-nav .brand span {
+        .nav-brand .brand-link span {
             font-weight: 300;
             color: var(--text-secondary);
         }
 
-        .top-nav .nav-links {
+        .nav-links {
             display: flex;
-            gap: 0.2rem;
+            align-items: center;
+            gap: 0.15rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1 1 auto;
+            justify-content: center;
             flex-wrap: wrap;
         }
 
-        .top-nav .nav-links a {
+        .nav-links li {
+            position: relative;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 0.4rem 1rem;
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.82rem;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
+            font-size: 0.85rem;
+            border-radius: 40px;
             transition: 0.25s;
             background: transparent;
             border: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
         }
 
-        .top-nav .nav-links a:hover {
+        .nav-link:hover {
             color: var(--text-primary);
             background: var(--nav-hover);
             border-color: var(--border-subtle);
         }
 
-        .top-nav .nav-links a.active {
+        .nav-link.active {
             color: var(--text-primary);
             background: var(--nav-hover);
             border-color: var(--border-subtle);
         }
 
-        .top-nav .nav-actions {
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 200px;
+            background: var(--dropdown-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 0.4rem 0;
+            box-shadow: var(--dropdown-shadow);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
+            transform: translateX(-50%) translateY(-6px);
+            z-index: 100;
+            list-style: none;
+        }
+
+        .dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1.2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            transition: 0.2s;
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 0;
+        }
+
+        .dropdown-item:hover {
+            color: var(--text-primary);
+            background: var(--nav-hover);
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 16px 16px 0 0;
+        }
+        .dropdown-item:last-child {
+            border-radius: 0 0 16px 16px;
+        }
+
+        .nav-actions {
             display: flex;
-            gap: 0.5rem;
             align-items: center;
-            margin-left: auto;
+            gap: 0.5rem;
+            flex-shrink: 0;
         }
 
-        /* 头部（原header改为内嵌） */
+        .nav-actions .theme-toggle {
+            background: var(--bg-control);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.3rem 0.8rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            line-height: 1;
+            color: var(--text-secondary);
+        }
+        .nav-actions .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 780px) {
+            .main-nav {
+                padding: 0.2rem 0.8rem;
+                border-radius: 40px;
+            }
+            .nav-inner {
+                justify-content: center;
+            }
+            .nav-brand {
+                display: none;
+            }
+            .nav-links {
+                gap: 0.05rem;
+            }
+            .nav-link {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+            }
+            .dropdown-menu {
+                min-width: 160px;
+                left: 0;
+                transform: translateX(0);
+            }
+            .dropdown-menu.open {
+                transform: translateX(0) translateY(0);
+            }
+            .nav-actions .theme-toggle {
+                font-size: 0.9rem;
+                padding: 0.2rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-link {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
+            .nav-links {
+                gap: 0.02rem;
+            }
+            .dropdown-menu {
+                min-width: 140px;
+            }
+            .dropdown-item {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
+        /* ============================================================ */
+        /* 头部（原有）                                                  */
+        /* ============================================================ */
         .header {
             display: flex;
             justify-content: space-between;
@@ -229,7 +398,6 @@
             color: var(--select-option-color);
         }
 
-        /* 模式切换 */
         .mode-selector {
             display: flex;
             gap: 0.2rem;
@@ -254,23 +422,6 @@
             color: var(--text-primary);
         }
         .mode-selector button:hover {
-            color: var(--text-primary);
-        }
-
-        /* 主题切换按钮 */
-        .theme-toggle {
-            background: var(--bg-control);
-            border: 1px solid var(--border-subtle);
-            border-radius: 40px;
-            padding: 0.3rem 0.8rem;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            line-height: 1;
-            color: var(--text-secondary);
-        }
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.07);
             color: var(--text-primary);
         }
 
@@ -644,13 +795,6 @@
             .suffix-tags {
                 max-height: 70px;
             }
-            .top-nav {
-                gap: 0.6rem;
-            }
-            .top-nav .nav-actions {
-                margin-left: 0;
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -662,17 +806,41 @@
     <!-- 主容器 -->
     <div class="container" id="appContainer">
 
-        <!-- ===== 顶部导航栏 ===== -->
-        <nav class="top-nav">
-            <a href="#" class="brand">架空<span>之名</span></a>
-            <div class="nav-links">
-                <a href="#section-generate" class="active">生成器</a>
-                <a href="#section-suffix">后缀库</a>
-                <a href="#section-plan">规划</a>
-                <a href="#section-about">关于</a>
-            </div>
-            <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle" title="切换日间/夜间模式">🌙</button>
+        <!-- ============================================================ -->
+        <!-- 导航栏 · 居中 · 带“工具”下拉子菜单                          -->
+        <!-- ============================================================ -->
+        <nav class="main-nav" id="mainNav">
+            <div class="nav-inner">
+                <!-- 左: 品牌 -->
+                <div class="nav-brand">
+                    <a href="#" class="brand-link">架空<span>之名</span></a>
+                </div>
+
+                <!-- 中: 导航链接（居中） -->
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link active">主页</a></li>
+
+                    <!-- 工具 · 带下拉子菜单 -->
+                    <li class="nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="toolsToggle">工具 ▾</a>
+                        <ul class="dropdown-menu" id="toolsMenu">
+                            <li><a href="#" class="dropdown-item">架空地名/站名生成器</a></li>
+                            <li><a href="#" class="dropdown-item">线路规划工具</a></li>
+                            <li><a href="#" class="dropdown-item">地名风格转换</a></li>
+                            <li><a href="#" class="dropdown-item">批量导出/导入</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#" class="nav-link">宣传</a></li>
+                    <li><a href="#" class="nav-link">设置</a></li>
+                    <li><a href="#" class="nav-link">赞助</a></li>
+                    <li><a href="#" class="nav-link">源码</a></li>
+                </ul>
+
+                <!-- 右: 主题切换 -->
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggleNav" title="切换日间/夜间模式">🌙</button>
+                </div>
             </div>
         </nav>
 
@@ -826,7 +994,43 @@
         animateParticles();
 
         // ================================================================
-        //  2. 核心数据
+        //  2. 导航栏交互
+        // ================================================================
+        (function() {
+            const toggleBtn = document.getElementById('toolsToggle');
+            const menu = document.getElementById('toolsMenu');
+
+            if (toggleBtn && menu) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    menu.classList.toggle('open');
+                });
+
+                menu.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        menu.classList.remove('open');
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !toggleBtn.contains(e.target)) {
+                        menu.classList.remove('open');
+                    }
+                });
+            }
+
+            // 导航链接高亮
+            document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        })();
+
+        // ================================================================
+        //  3. 核心数据
         // ================================================================
 
         const DEFAULT_SUFFIXES = [
@@ -929,7 +1133,7 @@
         };
 
         // ================================================================
-        //  3. 状态
+        //  4. 状态
         // ================================================================
 
         let suffixes = [...DEFAULT_SUFFIXES];
@@ -939,7 +1143,7 @@
         let currentTheme = 'dark';
 
         // ================================================================
-        //  4. 核心生成逻辑
+        //  5. 核心生成逻辑
         // ================================================================
 
         function pick(arr) {
@@ -1088,7 +1292,7 @@
         }
 
         // ================================================================
-        //  5. UI 交互
+        //  6. UI 交互
         // ================================================================
 
         const resultList = document.getElementById('resultList');
@@ -1106,42 +1310,39 @@
         const linePlan = document.getElementById('linePlan');
         const modeSelector = document.getElementById('modeSelector');
         const modeSubtitle = document.getElementById('modeSubtitle');
-        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleNav = document.getElementById('themeToggleNav');
 
         const len2 = document.getElementById('len2');
         const len3 = document.getElementById('len3');
         const len4 = document.getElementById('len4');
         const typeChecks = document.querySelectorAll('.type-check');
 
-        // --- 导航栏链接高亮与平滑跳转 ---
-        document.querySelectorAll('.top-nav .nav-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId && targetId.startsWith('#')) {
-                    const targetEl = document.querySelector(targetId);
-                    if (targetEl) {
-                        targetEl.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
-                // 高亮当前
-                document.querySelectorAll('.top-nav .nav-links a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // --- 主题切换 ---
+        // --- 主题切换（导航栏与主页面联动） ---
         function setTheme(theme) {
             currentTheme = theme;
             document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : '');
-            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+            if (themeToggleNav) {
+                themeToggleNav.textContent = theme === 'light' ? '🌙' : '☀️';
+            }
             particles.forEach(p => p.opacity = Math.random() * 0.3 + 0.05);
         }
 
-        themeToggle.addEventListener('click', function() {
-            const next = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(next);
+        if (themeToggleNav) {
+            themeToggleNav.addEventListener('click', function() {
+                const next = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(next);
+            });
+        }
+
+        // 监听主页面主题变化，同步导航栏按钮图标
+        const observer = new MutationObserver(() => {
+            const html = document.documentElement;
+            const isLight = html.getAttribute('data-theme') === 'light';
+            if (themeToggleNav) {
+                themeToggleNav.textContent = isLight ? '🌙' : '☀️';
+            }
         });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
         // --- 模式切换 ---
         modeSelector.querySelectorAll('button').forEach(btn => {
@@ -1258,7 +1459,7 @@
         }
 
         // ================================================================
-        //  6. 事件绑定
+        //  7. 事件绑定
         // ================================================================
 
         generateBtn.addEventListener('click', generateAndRender);
@@ -1293,7 +1494,7 @@
         });
 
         // ================================================================
-        //  7. 启动
+        //  8. 启动
         // ================================================================
 
         renderSuffixes();
@@ -1301,7 +1502,7 @@
         renderResults([]);
         setTheme('dark');
 
-        console.log(' 地名站名生成器 已加载 (含顶部导航栏)');
+        console.log(' 地名站名生成器 已加载 (含居中导航栏+工具下拉)');
         console.log(` 后缀库：${suffixes.length} 项`);
         console.log(` 当前风格：${REGION_NAMES[currentRegion] || currentRegion}`);
         console.log(` 当前模式：${currentMode === 'station' ? '站名' : '地名'}`);
