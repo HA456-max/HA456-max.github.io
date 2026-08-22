@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
 
-        /* 主题变量（日间/夜间） */
+        /* 主题变量 */
         :root {
             --bg-primary: #0c0c0e;
             --bg-card: rgba(255, 255, 255, 0.04);
@@ -21,22 +21,21 @@
             --text-secondary: #9a9591;
             --text-muted: #5f5b58;
             --accent: #b0a8a0;
-            --accent-glow: rgba(180, 170, 160, 0.08);
             --bg-control: rgba(0, 0, 0, 0.2);
             --bg-input: rgba(0, 0, 0, 0.35);
             --bg-result: rgba(0, 0, 0, 0.2);
             --shadow-card: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.015) inset;
-            --particle-color: rgba(200, 190, 180, 0.3);
             --bg-body-radial-1: rgba(180, 170, 160, 0.04);
             --bg-body-radial-2: rgba(180, 170, 160, 0.03);
             --select-option-bg: #1a1816;
             --select-option-color: #f0ece8;
-            --nav-bg: rgba(0, 0, 0, 0.25);
-            --nav-hover: rgba(255, 255, 255, 0.06);
+            --nav-bg: rgba(0, 0, 0, 0.82);
+            --nav-hover: rgba(255, 255, 255, 0.08);
             --dropdown-bg: rgba(20, 20, 22, 0.92);
             --dropdown-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
             --radius: 1.6rem;
             --radius-sm: 0.8rem;
+            --nav-height: 52px;
         }
 
         [data-theme="light"] {
@@ -47,17 +46,15 @@
             --text-secondary: #5a5550;
             --text-muted: #8a8580;
             --accent: #8a7e74;
-            --accent-glow: rgba(120, 110, 100, 0.08);
             --bg-control: rgba(0, 0, 0, 0.04);
             --bg-input: rgba(0, 0, 0, 0.06);
             --bg-result: rgba(0, 0, 0, 0.04);
             --shadow-card: 0 40px 80px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-            --particle-color: rgba(100, 90, 80, 0.15);
             --bg-body-radial-1: rgba(120, 110, 100, 0.04);
             --bg-body-radial-2: rgba(120, 110, 100, 0.03);
             --select-option-bg: #f0ebe6;
             --select-option-color: #2c2a28;
-            --nav-bg: rgba(255, 255, 255, 0.3);
+            --nav-bg: rgba(255, 255, 255, 0.82);
             --nav-hover: rgba(0, 0, 0, 0.04);
             --dropdown-bg: rgba(240, 235, 230, 0.92);
             --dropdown-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
@@ -71,11 +68,12 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 1.2rem 1.2rem;
+            padding: 0;
             background-image:
                 radial-gradient(ellipse at 20% 30%, var(--bg-body-radial-1) 0%, transparent 60%),
                 radial-gradient(ellipse at 80% 70%, var(--bg-body-radial-2) 0%, transparent 50%);
             transition: background 0.4s, color 0.3s;
+            padding-top: var(--nav-height);
         }
 
         /* 粒子背景 */
@@ -87,6 +85,217 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
+        }
+
+        /* ===== 固定顶部导航栏 ===== */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            width: 100%;
+            gap: 0.8rem;
+            flex-wrap: nowrap;
+        }
+
+        .nav-brand .brand-link {
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .nav-brand .brand-link span {
+            font-weight: 300;
+            color: var(--text-secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1 1 auto;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .nav-links li {
+            position: relative;
+            list-style: none;
+            flex-shrink: 0;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            border-radius: 30px;
+            transition: 0.25s;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--nav-hover);
+            border-color: var(--border-subtle);
+        }
+        .nav-link.active {
+            color: var(--text-primary);
+            background: var(--nav-hover);
+            border-color: var(--border-subtle);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+        .dropdown-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 180px;
+            background: var(--dropdown-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 0.3rem 0;
+            box-shadow: var(--dropdown-shadow);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
+            transform: translateX(-50%) translateY(-6px);
+            z-index: 100;
+            list-style: none;
+        }
+        .dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.4rem 1.2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.78rem;
+            transition: 0.2s;
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 0;
+        }
+        .dropdown-item:hover {
+            color: var(--text-primary);
+            background: var(--nav-hover);
+        }
+        .dropdown-item:first-child {
+            border-radius: 14px 14px 0 0;
+        }
+        .dropdown-item:last-child {
+            border-radius: 0 0 14px 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+        .nav-actions .theme-toggle {
+            background: var(--bg-control);
+            border: 1px solid var(--border-subtle);
+            border-radius: 30px;
+            padding: 0.2rem 0.6rem;
+            font-size: 1.0rem;
+            cursor: pointer;
+            transition: 0.3s;
+            line-height: 1;
+            color: var(--text-secondary);
+        }
+        .nav-actions .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
+        }
+
+        /* 响应式导航 */
+        @media (max-width: 780px) {
+            .nav-brand .brand-link {
+                font-size: 0.85rem;
+            }
+            .nav-link {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+            .dropdown-menu {
+                min-width: 140px;
+                left: 0;
+                transform: translateX(0);
+            }
+            .dropdown-menu.open {
+                transform: translateX(0) translateY(0);
+            }
+            .nav-actions .theme-toggle {
+                font-size: 0.85rem;
+                padding: 0.15rem 0.4rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-link {
+                font-size: 0.6rem;
+                padding: 0.15rem 0.35rem;
+            }
+            .dropdown-menu {
+                min-width: 120px;
+            }
+            .dropdown-item {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .nav-brand .brand-link {
+                font-size: 0.7rem;
+            }
         }
 
         /* 主容器 */
@@ -103,8 +312,8 @@
             border: 1px solid var(--border-subtle);
             box-shadow: var(--shadow-card);
             transition: background 0.4s, border-color 0.3s, box-shadow 0.4s;
+            margin-top: 0.6rem;
         }
-
         @media (max-width: 780px) {
             .container {
                 padding: 0 1.2rem 2rem;
@@ -112,243 +321,19 @@
             }
         }
 
-        /* ============================================================ */
-        /* 导航栏 · 居中 · 带“工具”下拉子菜单                          */
-        /* ============================================================ */
-        .main-nav {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            background: var(--nav-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 60px;
-            border: 1px solid var(--border-subtle);
-            padding: 0.2rem 1.2rem;
-            margin-bottom: 1.2rem;
-            transition: background 0.3s, border-color 0.3s;
-        }
-
-        .nav-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 100%;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-brand .brand-link {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--accent);
-            text-decoration: none;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-        }
-        .nav-brand .brand-link span {
-            font-weight: 300;
-            color: var(--text-secondary);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.15rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            flex: 1 1 auto;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-links li {
-            position: relative;
-            list-style: none;
-        }
-
-        .nav-link {
-            display: inline-block;
-            padding: 0.4rem 1rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.85rem;
-            border-radius: 40px;
-            transition: 0.25s;
-            background: transparent;
-            border: 1px solid transparent;
-            cursor: pointer;
-            white-space: nowrap;
-            font-family: inherit;
-        }
-
-        .nav-link:hover {
-            color: var(--text-primary);
-            background: var(--nav-hover);
-            border-color: var(--border-subtle);
-        }
-
-        .nav-link.active {
-            color: var(--text-primary);
-            background: var(--nav-hover);
-            border-color: var(--border-subtle);
-        }
-
-        .nav-dropdown {
-            position: relative;
-        }
-
-        .dropdown-toggle {
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 50%;
-            transform: translateX(-50%);
-            min-width: 200px;
-            background: var(--dropdown-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 0.4rem 0;
-            box-shadow: var(--dropdown-shadow);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
-            transform: translateX(-50%) translateY(-6px);
-            z-index: 100;
-            list-style: none;
-        }
-
-        .dropdown-menu.open {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .dropdown-item {
-            display: block;
-            padding: 0.5rem 1.2rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.82rem;
-            transition: 0.2s;
-            white-space: nowrap;
-            background: transparent;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            font-family: inherit;
-            border-radius: 0;
-        }
-
-        .dropdown-item:hover {
-            color: var(--text-primary);
-            background: var(--nav-hover);
-        }
-
-        .dropdown-item:first-child {
-            border-radius: 16px 16px 0 0;
-        }
-        .dropdown-item:last-child {
-            border-radius: 0 0 16px 16px;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .nav-actions .theme-toggle {
-            background: var(--bg-control);
-            border: 1px solid var(--border-subtle);
-            border-radius: 40px;
-            padding: 0.3rem 0.8rem;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            line-height: 1;
-            color: var(--text-secondary);
-        }
-        .nav-actions .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.07);
-            color: var(--text-primary);
-        }
-
-        @media (max-width: 780px) {
-            .main-nav {
-                padding: 0.2rem 0.8rem;
-                border-radius: 40px;
-            }
-            .nav-inner {
-                justify-content: center;
-            }
-            .nav-brand {
-                display: none;
-            }
-            .nav-links {
-                gap: 0.05rem;
-            }
-            .nav-link {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.75rem;
-            }
-            .dropdown-menu {
-                min-width: 160px;
-                left: 0;
-                transform: translateX(0);
-            }
-            .dropdown-menu.open {
-                transform: translateX(0) translateY(0);
-            }
-            .nav-actions .theme-toggle {
-                font-size: 0.9rem;
-                padding: 0.2rem 0.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-link {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.7rem;
-            }
-            .nav-links {
-                gap: 0.02rem;
-            }
-            .dropdown-menu {
-                min-width: 140px;
-            }
-            .dropdown-item {
-                font-size: 0.75rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-
-        /* ============================================================ */
-        /* 头部（原有）                                                  */
-        /* ============================================================ */
+        /* 头部 */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 1rem 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            padding-top: 1.2rem;
             padding-bottom: 1.2rem;
             border-bottom: 1px solid var(--border-subtle);
             transition: border-color 0.3s;
         }
-
         .header-left h1 {
             font-size: 1.8rem;
             font-weight: 300;
@@ -368,25 +353,23 @@
 
         .header-actions {
             display: flex;
-            gap: 0.6rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
             align-items: center;
         }
-
         .header-actions button,
         .header-actions select {
             background: var(--bg-control);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
-            padding: 0.4rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: 0.25s;
             backdrop-filter: blur(4px);
             font-family: inherit;
         }
-
         .header-actions button:hover,
         .header-actions select:hover {
             background: rgba(255, 255, 255, 0.07);
@@ -400,19 +383,19 @@
 
         .mode-selector {
             display: flex;
-            gap: 0.2rem;
+            gap: 0.1rem;
             background: var(--bg-control);
             border: 1px solid var(--border-subtle);
-            border-radius: 40px;
-            padding: 0.1rem;
+            border-radius: 30px;
+            padding: 0.05rem;
         }
         .mode-selector button {
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            padding: 0.3rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: 0.25s;
             font-family: inherit;
@@ -431,7 +414,6 @@
             grid-template-columns: 1.4fr 1fr;
             gap: 2rem;
         }
-
         @media (max-width: 860px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -443,46 +425,41 @@
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 1.6rem;
+            gap: 1.2rem;
         }
-
         .control-section {
             background: var(--bg-control);
             border-radius: var(--radius-sm);
-            padding: 1.2rem 1.5rem 1.5rem;
+            padding: 1rem 1.2rem 1.2rem;
             border: 1px solid var(--border-subtle);
             transition: background 0.3s, border-color 0.3s;
         }
-
         .control-section .section-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--text-muted);
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.6rem;
         }
-
         .control-row {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 0.6rem 1.2rem;
-            margin-bottom: 0.6rem;
+            gap: 0.4rem 1rem;
+            margin-bottom: 0.4rem;
         }
-
         .control-row label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
-
         .control-row input[type="number"] {
-            width: 60px;
-            padding: 0.3rem 0.5rem;
+            width: 54px;
+            padding: 0.2rem 0.4rem;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: 30px;
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-align: center;
             outline: none;
             transition: 0.2s;
@@ -494,16 +471,15 @@
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.6rem 1.2rem;
-            padding: 0.3rem 0;
+            gap: 0.4rem 0.8rem;
+            padding: 0.2rem 0;
         }
-
         .checkbox-group label {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -512,8 +488,8 @@
         }
         .checkbox-group input[type="checkbox"] {
             accent-color: var(--accent);
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             cursor: pointer;
             opacity: 0.7;
         }
@@ -521,19 +497,18 @@
         .suffix-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.3rem 0.5rem;
-            margin-top: 0.4rem;
-            max-height: 100px;
+            gap: 0.2rem 0.4rem;
+            margin-top: 0.3rem;
+            max-height: 80px;
             overflow-y: auto;
-            padding: 0.3rem 0.1rem;
+            padding: 0.2rem 0.1rem;
         }
-
         .suffix-tag {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
-            padding: 0.1rem 0.7rem;
+            padding: 0.05rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             transition: 0.2s;
             cursor: default;
@@ -543,22 +518,21 @@
             background: rgba(255, 255, 255, 0.07);
             color: var(--text-primary);
         }
-
         .suffix-add-row {
             display: flex;
-            gap: 0.5rem;
-            margin-top: 0.6rem;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
         }
         .suffix-add-row input {
             flex: 1;
-            padding: 0.3rem 0.8rem;
+            padding: 0.2rem 0.6rem;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: 30px;
             color: var(--text-primary);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             outline: none;
-            min-width: 60px;
+            min-width: 50px;
         }
         .suffix-add-row input:focus {
             border-color: rgba(255, 255, 255, 0.15);
@@ -567,9 +541,9 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
-            padding: 0.3rem 1rem;
+            padding: 0.2rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: 0.2s;
             white-space: nowrap;
@@ -578,21 +552,20 @@
             background: rgba(255, 255, 255, 0.08);
             color: var(--text-primary);
         }
-
         .suffix-count {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
 
         .generate-btn {
             width: 100%;
-            padding: 0.9rem;
+            padding: 0.8rem;
             background: var(--bg-control);
             border: 1px solid var(--border-subtle);
             border-radius: 60px;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 500;
             letter-spacing: 1px;
             cursor: pointer;
@@ -600,7 +573,6 @@
             font-family: inherit;
             backdrop-filter: blur(4px);
         }
-
         .generate-btn:hover {
             background: rgba(255, 255, 255, 0.07);
             border-color: rgba(255, 255, 255, 0.15);
@@ -617,35 +589,31 @@
             flex-direction: column;
             gap: 1rem;
         }
-
         .result-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 0.6rem;
+            padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--border-subtle);
         }
-
         .result-header .count {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
         .result-header .count strong {
             color: var(--text-primary);
         }
-
         .result-header .actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
-
         .result-header .actions button {
             background: var(--bg-control);
             border: 1px solid var(--border-subtle);
             color: var(--text-secondary);
-            padding: 0.2rem 1rem;
+            padding: 0.15rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -657,51 +625,48 @@
         .result-list {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
-            max-height: 400px;
+            gap: 0.3rem;
+            max-height: 420px;
             overflow-y: auto;
-            padding-right: 0.3rem;
+            padding-right: 0.2rem;
         }
-
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             background: var(--bg-result);
-            border-radius: 40px;
+            border-radius: 30px;
             border: 1px solid var(--border-subtle);
             transition: 0.2s;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .result-item:hover {
             background: rgba(255, 255, 255, 0.03);
             border-color: rgba(255, 255, 255, 0.08);
         }
-
         .result-item .name {
             color: var(--text-primary);
         }
         .result-item .meta {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
             display: flex;
-            gap: 0.6rem;
+            gap: 0.4rem;
             align-items: center;
         }
         .result-item .meta .tag {
             background: rgba(255, 255, 255, 0.04);
-            padding: 0.05rem 0.6rem;
+            padding: 0.02rem 0.5rem;
             border-radius: 20px;
         }
-
         .result-item .copy-single {
             background: none;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.8rem;
-            padding: 0 0.3rem;
+            font-size: 0.7rem;
+            padding: 0 0.2rem;
             transition: 0.2s;
         }
         .result-item .copy-single:hover {
@@ -709,52 +674,49 @@
         }
 
         .line-plan {
-            margin-top: 1.8rem;
-            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.2rem;
             border-top: 1px solid var(--border-subtle);
         }
-
         .line-plan .section-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--text-muted);
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.4rem;
         }
-
         .line-plan textarea {
             width: 100%;
-            min-height: 90px;
-            padding: 0.8rem 1rem;
+            min-height: 70px;
+            padding: 0.6rem 0.8rem;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-sm);
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-family: inherit;
             resize: vertical;
             outline: none;
             transition: 0.2s;
-            line-height: 1.7;
+            line-height: 1.6;
         }
         .line-plan textarea:focus {
             border-color: rgba(255, 255, 255, 0.1);
         }
-
         .line-plan .hint {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            margin-top: 0.4rem;
+            margin-top: 0.3rem;
         }
 
         .footer {
-            margin-top: 2rem;
+            margin-top: 1.8rem;
             text-align: center;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             letter-spacing: 0.5px;
             border-top: 1px solid var(--border-subtle);
-            padding-top: 1.5rem;
+            padding-top: 1.2rem;
         }
 
         ::-webkit-scrollbar {
@@ -770,31 +732,80 @@
 
         .empty-state {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-align: center;
             padding: 2rem 0;
             letter-spacing: 0.3px;
         }
 
+        /* 额外控制行 */
+        .control-row-double {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 1rem;
+        }
         @media (max-width: 480px) {
-            .header-left h1 {
-                font-size: 1.3rem;
+            .control-row-double {
+                grid-template-columns: 1fr;
             }
-            .control-section {
-                padding: 0.8rem 1rem 1.2rem;
-            }
-            .result-item {
-                font-size: 0.85rem;
-                padding: 0.4rem 0.8rem;
-                flex-wrap: wrap;
-                gap: 0.3rem 0.5rem;
-            }
-            .result-item .meta {
-                font-size: 0.6rem;
-            }
-            .suffix-tags {
-                max-height: 70px;
-            }
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+            accent-color: var(--accent);
+            background: transparent;
+            height: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .slider-row .value-display {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .tag-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.5rem;
+            margin-top: 0.3rem;
+        }
+        .tag-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 0.05rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+        .tag-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
+        }
+        .tag-item.active {
+            border-color: var(--accent);
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0.2rem 0;
+        }
+        .stat-row span strong {
+            color: var(--text-primary);
         }
     </style>
 </head>
@@ -803,52 +814,43 @@
     <!-- 粒子背景 -->
     <canvas id="particles-canvas"></canvas>
 
+    <!-- ===== 固定顶部导航栏 ===== -->
+    <nav class="main-nav" id="mainNav">
+        <div class="nav-inner">
+            <div class="nav-brand">
+                <a href="#" class="brand-link">架空<span>之名</span></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active">主页</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="toolsToggle">工具 ▾</a>
+                    <ul class="dropdown-menu" id="toolsMenu">
+                        <li><a href="#" class="dropdown-item">架空地名/站名生成器</a></li>
+                        <li><a href="#" class="dropdown-item">线路规划工具</a></li>
+                        <li><a href="#" class="dropdown-item">地名风格转换</a></li>
+                        <li><a href="#" class="dropdown-item">批量导出/导入</a></li>
+                        <li><a href="#" class="dropdown-item">词库编辑器</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" class="nav-link">宣传</a></li>
+                <li><a href="#" class="nav-link">设置</a></li>
+                <li><a href="#" class="nav-link">赞助</a></li>
+                <li><a href="#" class="nav-link">源码</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggleNav" title="切换日间/夜间模式">🌙</button>
+            </div>
+        </div>
+    </nav>
+
     <!-- 主容器 -->
     <div class="container" id="appContainer">
 
-        <!-- ============================================================ -->
-        <!-- 导航栏 · 居中 · 带“工具”下拉子菜单                          -->
-        <!-- ============================================================ -->
-        <nav class="main-nav" id="mainNav">
-            <div class="nav-inner">
-                <!-- 左: 品牌 -->
-                <div class="nav-brand">
-                    <a href="#" class="brand-link">架空<span>之名</span></a>
-                </div>
-
-                <!-- 中: 导航链接（居中） -->
-                <ul class="nav-links">
-                    <li><a href="#" class="nav-link active">主页</a></li>
-
-                    <!-- 工具 · 带下拉子菜单 -->
-                    <li class="nav-dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" id="toolsToggle">工具 ▾</a>
-                        <ul class="dropdown-menu" id="toolsMenu">
-                            <li><a href="#" class="dropdown-item">架空地名/站名生成器</a></li>
-                            <li><a href="#" class="dropdown-item">线路规划工具</a></li>
-                            <li><a href="#" class="dropdown-item">地名风格转换</a></li>
-                            <li><a href="#" class="dropdown-item">批量导出/导入</a></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#" class="nav-link">宣传</a></li>
-                    <li><a href="#" class="nav-link">设置</a></li>
-                    <li><a href="#" class="nav-link">赞助</a></li>
-                    <li><a href="#" class="nav-link">源码</a></li>
-                </ul>
-
-                <!-- 右: 主题切换 -->
-                <div class="nav-actions">
-                    <button class="theme-toggle" id="themeToggleNav" title="切换日间/夜间模式">🌙</button>
-                </div>
-            </div>
-        </nav>
-
         <!-- 头部 -->
-        <header class="header" id="section-generate">
+        <header class="header">
             <div class="header-left">
                 <h1>架空<span>之名</span></h1>
-                <div class="sub" id="modeSubtitle">基于真实地铁站名统计 · 多风格切换 · 站名模式</div>
+                <div class="sub" id="modeSubtitle">基于真实地名统计 · 多风格切换 · 站名模式</div>
             </div>
             <div class="header-actions">
                 <select id="regionSelect">
@@ -858,6 +860,9 @@
                     <option value="cyber">赛博</option>
                     <option value="fantasy">奇幻</option>
                     <option value="wasteland">废土</option>
+                    <option value="ancient">古风</option>
+                    <option value="ocean">海洋</option>
+                    <option value="celestial">天象</option>
                 </select>
                 <button id="themeRandomBtn">随机风格</button>
                 <div class="mode-selector" id="modeSelector">
@@ -878,36 +883,81 @@
                     <div class="section-label">生成参数</div>
                     <div class="control-row">
                         <label>生成数量</label>
-                        <input type="number" id="countInput" value="20" min="1" max="100" />
-                        <label style="margin-left:0.6rem;">站名类型</label>
+                        <input type="number" id="countInput" value="20" min="1" max="150" />
+                        <label>字数</label>
+                        <div class="checkbox-group" style="gap:0.2rem 0.6rem;">
+                            <label><input type="checkbox" id="len2" /> 2</label>
+                            <label><input type="checkbox" id="len3" /> 3</label>
+                            <label><input type="checkbox" id="len4" /> 4</label>
+                            <label><input type="checkbox" id="len5" /> 5</label>
+                        </div>
+                    </div>
+                    <div class="control-row" style="margin-bottom:0.2rem;">
+                        <label>站名类型</label>
                     </div>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" class="type-check" value="road" /> 路名型</label>
-                        <label><input type="checkbox" class="type-check" value="landmark" /> 地标型</label>
-                        <label><input type="checkbox" class="type-check" value="district" /> 片区型</label>
-                        <label><input type="checkbox" class="type-check" value="nature" /> 自然地貌</label>
-                        <label><input type="checkbox" class="type-check" value="mixed" /> 混合随机</label>
+                        <label><input type="checkbox" class="type-check" value="road" /> 路名</label>
+                        <label><input type="checkbox" class="type-check" value="landmark" /> 地标</label>
+                        <label><input type="checkbox" class="type-check" value="district" /> 片区</label>
+                        <label><input type="checkbox" class="type-check" value="nature" /> 自然</label>
+                        <label><input type="checkbox" class="type-check" value="mixed" /> 混合</label>
+                        <label><input type="checkbox" class="type-check" value="historical" /> 历史</label>
+                        <label><input type="checkbox" class="type-check" value="myth" /> 神话</label>
                     </div>
                 </div>
 
-                <!-- 字数与后缀库 -->
+                <!-- 后缀库与高级设置 -->
                 <div class="control-section" id="section-suffix">
-                    <div class="section-label">字数与后缀库</div>
-                    <div class="control-row">
-                        <label><input type="checkbox" id="len2" /> 两字</label>
-                        <label><input type="checkbox" id="len3" /> 三字</label>
-                        <label><input type="checkbox" id="len4" /> 四字</label>
-                    </div>
-
-                    <div class="suffix-tags" id="suffixTags">
-                        <!-- 由 JS 动态渲染 -->
-                    </div>
-
+                    <div class="section-label">后缀库与高级设置</div>
+                    <div class="suffix-tags" id="suffixTags"></div>
                     <div class="suffix-add-row">
                         <input type="text" id="suffixInput" placeholder="输入新后缀" />
                         <button id="addSuffixBtn">添加</button>
                     </div>
                     <div class="suffix-count" id="suffixCount">当前后缀：0 项</div>
+
+                    <div style="margin-top:0.6rem;border-top:1px solid var(--border-subtle);padding-top:0.6rem;">
+                        <div class="control-row">
+                            <label>风格强度</label>
+                            <div class="slider-row">
+                                <input type="range" id="styleIntensity" min="0" max="100" value="50" />
+                                <span class="value-display" id="intensityDisplay">50</span>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <label>后缀概率</label>
+                            <div class="slider-row">
+                                <input type="range" id="suffixChance" min="0" max="100" value="40" />
+                                <span class="value-display" id="suffixChanceDisplay">40</span>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <label>古典化程度</label>
+                            <div class="slider-row">
+                                <input type="range" id="archaicLevel" min="0" max="100" value="20" />
+                                <span class="value-display" id="archaicDisplay">20</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 词库筛选 -->
+                <div class="control-section">
+                    <div class="section-label">词库筛选</div>
+                    <div class="tag-group" id="rootFilterTags">
+                        <span class="tag-item active" data-filter="all">全部</span>
+                        <span class="tag-item" data-filter="山水">山水</span>
+                        <span class="tag-item" data-filter="人文">人文</span>
+                        <span class="tag-item" data-filter="天象">天象</span>
+                        <span class="tag-item" data-filter="植物">植物</span>
+                        <span class="tag-item" data-filter="动物">动物</span>
+                        <span class="tag-item" data-filter="建筑">建筑</span>
+                        <span class="tag-item" data-filter="色彩">色彩</span>
+                    </div>
+                    <div class="stat-row" style="margin-top:0.3rem;">
+                        <span>词根总数：<strong id="rootCountStat">0</strong></span>
+                        <span>后缀总数：<strong id="suffixCountStat">0</strong></span>
+                    </div>
                 </div>
 
                 <!-- 生成按钮 -->
@@ -919,6 +969,7 @@
                 <div class="result-header">
                     <span class="count">已生成：<strong id="resultCount">0</strong> 个</span>
                     <div class="actions">
+                        <button id="exportJsonBtn">导出JSON</button>
                         <button id="copyAllBtn">复制全部</button>
                         <button id="clearBtn">清空</button>
                     </div>
@@ -928,17 +979,27 @@
                     <div class="empty-state">点击「生成站名」开始创建</div>
                 </div>
 
+                <!-- 统计信息 -->
+                <div class="control-section" style="padding:0.6rem 1rem;">
+                    <div class="stat-row">
+                        <span>去重后：<strong id="uniqueCount">0</strong></span>
+                        <span>最长：<strong id="maxLenStat">0</strong>字</span>
+                        <span>最短：<strong id="minLenStat">0</strong>字</span>
+                        <span>平均：<strong id="avgLenStat">0</strong>字</span>
+                    </div>
+                </div>
+
                 <!-- 线路规划区 -->
                 <div class="line-plan" id="section-plan">
                     <div class="section-label">未来规划</div>
                     <textarea id="linePlan" placeholder="规划项目：将导入的AARC存档中的站名全部提取"></textarea>
-                    <div class="hint">还在施工，这一段我想适配或允许将AARC存档导入转换成站名</div>
+                    <div class="hint">支持导入/导出词库，批量生成，风格迁移等功能开发中</div>
                 </div>
             </div>
 
         </div>
 
-        <div class="footer" id="section-about">架空之名 · 究极至尊版 · 持续迭代中</div>
+        <div class="footer" id="section-about">架空之名 · 究极至尊版 · 持续迭代中 · 词根总数 500+</div>
     </div>
 
     <script>
@@ -962,9 +1023,9 @@
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
                 this.size = Math.random() * 1.6 + 0.3;
-                this.speedX = (Math.random() - 0.5) * 0.15;
-                this.speedY = (Math.random() - 0.5) * 0.15;
-                this.opacity = Math.random() * 0.3 + 0.05;
+                this.speedX = (Math.random() - 0.5) * 0.12;
+                this.speedY = (Math.random() - 0.5) * 0.12;
+                this.opacity = Math.random() * 0.25 + 0.05;
             }
             update() {
                 this.x += this.speedX;
@@ -982,8 +1043,7 @@
                 ctx.fill();
             }
         }
-
-        for (let i = 0; i < 70; i++) particles.push(new Particle());
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, width, height);
@@ -999,28 +1059,21 @@
         (function() {
             const toggleBtn = document.getElementById('toolsToggle');
             const menu = document.getElementById('toolsMenu');
-
             if (toggleBtn && menu) {
                 toggleBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     menu.classList.toggle('open');
                 });
-
                 menu.querySelectorAll('.dropdown-item').forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        menu.classList.remove('open');
-                    });
+                    item.addEventListener('click', function() { menu.classList.remove('open'); });
                 });
-
                 document.addEventListener('click', function(e) {
                     if (!menu.contains(e.target) && !toggleBtn.contains(e.target)) {
                         menu.classList.remove('open');
                     }
                 });
             }
-
-            // 导航链接高亮
             document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
                 link.addEventListener('click', function(e) {
                     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -1030,9 +1083,10 @@
         })();
 
         // ================================================================
-        //  3. 核心数据
+        //  3. 核心数据 —— 大幅扩充词库
         // ================================================================
 
+        // 默认后缀库（已大幅扩充）
         const DEFAULT_SUFFIXES = [
             '坪', '坡', '坑', '塘', '圩', '埠', '埔', '坝', '墩', '城',
             '坊', '场', '渠', '溪', '港', '湾', '湖', '池', '洼', '沟',
@@ -1041,95 +1095,175 @@
             '府', '庄', '店', '庙', '巷', '路', '街', '陂', '陵', '寺',
             '祠', '寨', '营', '苑', '郭', '铺', '堂', '镇', '角', '里',
             '台', '户', '丘', '井', '屯', '门', '卫', '甸', '驿', '堡',
-            '关', '津', '堰', '沚', '汀', '渚', '岬', '嶂', '峦', '岫'
+            '关', '津', '堰', '沚', '汀', '渚', '岬', '嶂', '峦', '岫',
+            '湾', '滩', '汊', '咀', '涌', '浦', '浜', '沱', '汜', '沚',
+            '津', '渡', '矶', '礁', '峰', '崖', '壁', '麓', '坳', '壑',
+            '峡', '谷', '川', '泽', '泊', '淀', '荡', '漾', '潭', '渊',
+            '渚', '汀', '洲', '沚', '浦', '浜', '滩', '湾', '港', '澳',
+            '镇', '乡', '都', '郡', '县', '邑', '亭', '台', '阁', '榭',
+            '轩', '斋', '院', '宫', '殿', '堂', '寺', '庙', '观', '庵',
+            '祠', '坛', '塔', '桥', '坊', '里', '弄', '巷', '街', '道'
         ];
 
+        // 词根分类库（大幅扩充）
+        const ROOT_CATEGORIES = {
+            '山水': ['山', '水', '江', '河', '湖', '海', '溪', '涧', '峰', '岭', '崖', '川', '泽', '洲', '岛', '湾', '滩', '峡', '谷',
+                '岬', '汊', '沚', '汀', '渚', '浦', '浜', '潭', '渊', '泊', '淀', '荡', '漾', '壑', '坳', '麓', '壁', '礁', '矶', '渡',
+                '津', '堰', '渠', '塘', '池', '洼', '沟', '坑', '坡', '坪', '坝', '墩'
+            ],
+            '人文': ['城', '镇', '乡', '都', '郡', '县', '邑', '村', '庄', '寨', '营', '屯', '驿', '关', '堡', '卫', '店', '铺', '坊',
+                '里', '弄', '巷', '街', '道', '路', '桥', '门', '口', '园', '苑', '府', '邸', '宅', '院', '斋', '轩', '榭', '亭', '台',
+                '阁', '楼', '宫', '殿', '堂', '寺', '庙', '观', '庵', '祠', '坛', '塔', '碑', '坊'
+            ],
+            '天象': ['日', '月', '星', '辰', '云', '霞', '雾', '霜', '雪', '雨', '风', '雷', '电', '虹', '岚', '霭', '霁', '曦', '曜',
+                '昶', '昱', '晨', '暮', '曙', '夕', '夜', '朝', '晚', '春', '夏', '秋', '冬', '晴', '阴', '明', '晦'
+            ],
+            '植物': ['松', '竹', '梅', '兰', '柳', '荷', '桃', '李', '杏', '樱', '枫', '桐', '榆', '槐', '柏', '桂', '竹', '苇', '蒲',
+                '芦', '莲', '菱', '藻', '苔', '藤', '蔓', '花', '草', '木', '林', '森', '莽', '菁', '蔚', '茂', '荣', '华'
+            ],
+            '动物': ['龙', '凤', '虎', '豹', '鹰', '鹤', '鹿', '狐', '狼', '熊', '猿', '象', '狮', '鲸', '鲨', '贝', '龟', '蛇', '鲤',
+                '鲛', '麟', '鸾', '鹏', '燕', '鹊', '莺', '蝶', '蜂', '萤'
+            ],
+            '建筑': ['楼', '台', '亭', '阁', '塔', '桥', '宫', '殿', '堂', '寺', '庙', '观', '庵', '祠', '坛', '堡', '城', '关', '门',
+                '坊', '里', '院', '宅', '邸', '府', '仓', '库', '栈', '驿', '馆'
+            ],
+            '色彩': ['青', '白', '碧', '翠', '苍', '玄', '素', '丹', '紫', '金', '银', '玉', '赤', '绯', '绛', '黛', '蓝', '绿', '黄',
+                '橙', '赤', '朱', '赭', '黛', '靛', '碧', '瑶', '琼', '琅', '玑'
+            ],
+            '古风': ['灵', '仙', '圣', '隐', '逸', '清', '明', '太', '永', '安', '宁', '平', '和', '长', '乐', '康', '泰', '祥', '瑞',
+                '福', '德', '仁', '义', '礼', '智', '信', '诚', '敬', '忠', '孝', '廉', '节', '贞', '刚', '毅', '勇', '武', '文', '雅',
+                '韵', '致', '朴', '素', '淡', '泊', '悠', '远', '高', '洁'
+            ]
+        };
+
+        // 将分类合并为完整词根列表
+        let ALL_ROOTS = [];
+        for (const cat in ROOT_CATEGORIES) {
+            ALL_ROOTS = ALL_ROOTS.concat(ROOT_CATEGORIES[cat]);
+        }
+        // 去重
+        ALL_ROOTS = [...new Set(ALL_ROOTS)];
+
+        // 风格词库（多风格扩充）
         const REGION_LEXICON = {
             chinese: {
-                roots: ['永', '安', '宁', '平', '和', '长', '乐', '康', '泰', '祥', '瑞', '福', '德', '仁', '义', '礼', '智',
-                    '信', '云', '山', '水', '月', '风', '雨', '雪', '霞', '林', '竹', '梅', '兰', '松', '柳', '荷', '溪', '涧', '谷',
-                    '峰', '岭', '川', '泽', '湖', '海', '江', '河', '泊', '青', '白', '碧', '翠', '苍', '玄', '素', '丹', '紫', '金',
-                    '玉', '灵', '仙', '圣', '隐', '逸', '清', '明', '太', '锦', '绣', '华', '丰', '裕', '昌', '盛', '茂', '蔚', '岚',
-                    '霁', '霜', '露', '虹', '雯', '霭', '昶', '昱', '晨', '曦', '昭', '曜', '璇', '玑', '瑜', '琅', '瑶', '璞', '珑'
-                ],
+                roots: ALL_ROOTS.slice(0, 200),
                 roadWords: ['大', '中', '华', '兴', '盛', '世', '通', '达', '顺', '畅', '广', '新', '建', '民', '生', '正', '直', '宏',
-                    '阔', '康', '庄'
+                    '阔', '康', '庄', '安', '宁', '永', '恒', '昌', '隆'
                 ],
                 landmarkWords: ['公园', '广场', '中心', '大厦', '剧院', '体育馆', '博物馆', '图书馆', '车站', '机场', '码头', '大桥', '隧道',
-                    '古塔', '钟楼', '殿堂', '会馆'
+                    '古塔', '钟楼', '殿堂', '会馆', '书院', '学府', '医馆', '药铺'
                 ],
                 districtWords: ['村', '街', '巷', '里', '弄', '坊', '庄', '屯', '营', '寨', '堡', '驿', '关', '镇', '乡', '邑', '郡',
-                    '闾', '闬'
+                    '闾', '闬', '都', '县'
                 ],
                 natureWords: ['山', '河', '湖', '海', '江', '溪', '涧', '峰', '岭', '崖', '川', '泽', '洲', '岛', '湾', '港', '滩',
-                    '岬', '峡', '汊'
+                    '岬', '峡', '汊', '浦', '浜', '沚', '汀', '渚'
                 ]
             },
             japanese: {
                 roots: ['樱', '枫', '竹', '梅', '松', '鹤', '鹿', '狐', '月', '星', '霞', '雾', '雪', '雨', '风', '林', '川', '谷',
                     '海', '岬', '青', '赤', '白', '紫', '金', '银', '翠', '茜', '绯', '绀', '萌', '浅', '深', '早', '晚', '朝', '夜',
                     '华', '凛', '绚', '耀', '煌', '碧', '滝', '湊', '浦', '浜', '原', '野', '森', '丘', '崎', '津', '湾', '汐', '凪',
-                    '雫', '紬', '柚', '杏', '楠', '榊', '桧', '桐'
+                    '雫', '紬', '柚', '杏', '楠', '榊', '桧', '桐', '葵', '菖蒲', '桔梗', '藤', '萩', '芒', '菊', '椿'
                 ],
-                roadWords: ['大', '中', '本', '通', '目', '番', '町', '丁', '目', '筋', '横', '御'],
-                landmarkWords: ['神社', '寺庙', '公园', '广场', '塔', '阁', '馆', '站', '港', '桥', '台', '城', '砦', '灯台'],
-                districtWords: ['町', '村', '驿', '台', '丘', '崎', '津', '浦', '浜', '原', '野', '森', '谷', '里', '郷', '社'],
-                natureWords: ['山', '川', '岬', '浦', '浜', '原', '野', '森', '丘', '谷', '峡', '岛', '崎', '津', '湾', '峰', '滝']
+                roadWords: ['大', '中', '本', '通', '目', '番', '町', '丁', '目', '筋', '横', '御', '参', '表', '裏'],
+                landmarkWords: ['神社', '寺庙', '公园', '广场', '塔', '阁', '馆', '站', '港', '桥', '台', '城', '砦', '灯台', '温泉',
+                    '庭园'
+                ],
+                districtWords: ['町', '村', '驿', '台', '丘', '崎', '津', '浦', '浜', '原', '野', '森', '谷', '里', '郷', '社', '院',
+                    '寺'
+                ],
+                natureWords: ['山', '川', '岬', '浦', '浜', '原', '野', '森', '丘', '谷', '峡', '岛', '崎', '津', '湾', '峰', '滝',
+                    '渊', '矶', '礁'
+                ]
             },
             western: {
                 roots: ['艾', '贝', '西', '洛', '兰', '德', '维', '克', '特', '雷', '安', '鲁', '菲', '尔', '顿', '林', '伍', '堡',
                     '斯', '塔', '福', '桥', '港', '湾', '山', '湖', '河', '谷', '格', '莱', '姆', '弗', '欧', '珀', '丹', '尼', '斯',
-                    '蒂', '芙', '洛', '丽', '梅', '达', '温', '诺', '亚', '塞', '恩', '瑞', '昂'
+                    '蒂', '芙', '洛', '丽', '梅', '达', '温', '诺', '亚', '塞', '恩', '瑞', '昂', '蒙', '利', '奥', '娜', '伊', '莎',
+                    '贝', '琳', '德', '拉', '玛', '修', '艾', '伦'
                 ],
-                roadWords: ['主', '大', '中央', '国王', '皇后', '公园', '花园', '大道', '街', '林荫', '皇室', '自由'],
-                landmarkWords: ['城堡', '大教堂', '广场', '市场', '剧院', '码头', '灯塔', '桥梁', '站', '宫', '议会', '塔'],
-                districtWords: ['村', '镇', '区', '郡', '城', '堡', '港', '湾', '谷', '山', '地', '畔', '丘'],
-                natureWords: ['山', '湖', '河', '谷', '湾', '峰', '峡', '岛', '角', '岬', '溪', '林', '野']
+                roadWords: ['主', '大', '中央', '国王', '皇后', '公园', '花园', '大道', '街', '林荫', '皇室', '自由', '胜利', '和平'],
+                landmarkWords: ['城堡', '大教堂', '广场', '市场', '剧院', '码头', '灯塔', '桥梁', '站', '宫', '议会', '塔', '凯旋门',
+                    '歌剧院'
+                ],
+                districtWords: ['村', '镇', '区', '郡', '城', '堡', '港', '湾', '谷', '山', '地', '畔', '丘', '庄园', '领地'],
+                natureWords: ['山', '湖', '河', '谷', '湾', '峰', '峡', '岛', '角', '岬', '溪', '林', '野', '草原', '森林']
             },
             cyber: {
                 roots: ['零', '芯', '磁', '光', '网', '频', '码', '云', '界', '域', '数', '智', '核', '晶', '脉', '链', '矩', '阵',
-                    '幻', '霓', '涡', '弦', '辐', '跃', '闪', '聚', '能', '恒', '动', '跃', '溯', '逸', '枢', '枢', '擎', '宙', '辰',
-                    '冥', '荧', '燎'
+                    '幻', '霓', '涡', '弦', '辐', '跃', '闪', '聚', '能', '恒', '动', '溯', '逸', '枢', '擎', '宙', '辰',
+                    '冥', '荧', '燎', '曜', '曦', '黯', '煌', '焱', '淼', '垚', '鑫', '森', '焱', '晶'
                 ],
-                roadWords: ['超', '极', '虚', '幻', '影', '光', '电', '磁', '量', '子', '熵', '暗', '幽', '脉', '频', '能', '讯', '跃'],
-                landmarkWords: ['中心', '枢纽', '塔', '港', '站', '核', '脉', '云', '界', '所', '库', '端', '堡', '穹', '桥'],
-                districtWords: ['区', '域', '层', '带', '环', '圈', '网', '云', '境', '维', '元'],
-                natureWords: ['流', '波', '光', '影', '雾', '汐', '潮', '镜', '虚', '渊', '渊', '汐', '岚']
+                roadWords: ['超', '极', '虚', '幻', '影', '光', '电', '磁', '量', '子', '熵', '暗', '幽', '脉', '频', '能', '讯', '跃',
+                    '宏', '微'
+                ],
+                landmarkWords: ['中心', '枢纽', '塔', '港', '站', '核', '脉', '云', '界', '所', '库', '端', '堡', '穹', '桥', '矩阵',
+                    '服务器'
+                ],
+                districtWords: ['区', '域', '层', '带', '环', '圈', '网', '云', '境', '维', '元', '段', '频'],
+                natureWords: ['流', '波', '光', '影', '雾', '汐', '潮', '镜', '虚', '渊', '岚', '霰', '霓', '虹']
             },
             fantasy: {
                 roots: ['霜', '焰', '风', '雷', '龙', '狮', '鹰', '狼', '鹿', '熊', '鸦', '星', '辰', '月', '日', '辉', '影', '魂',
                     '灵', '魔', '玄', '幽', '冥', '岚', '炽', '皓', '曜', '曦', '暮', '曙', '永', '无', '极', '苍', '碧', '曜', '绛',
-                    '绯', '黛', '霜', '霰'
+                    '绯', '黛', '霜', '霰', '烬', '煌', '焱', '淼', '垚', '鑫', '森'
                 ],
                 roadWords: ['圣', '暗', '炎', '冰', '金', '银', '翠', '琥珀', '赤', '青', '玄', '白', '灰', '暮', '曙', '永', '无',
-                    '秘', '铸'
+                    '秘', '铸', '龙', '凤'
                 ],
                 landmarkWords: ['堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠',
-                    '雪原', '祭坛', '圣殿', '方尖碑'
+                    '雪原', '祭坛', '圣殿', '方尖碑', '遗迹', '矿坑'
                 ],
-                districtWords: ['城', '镇', '村', '堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭', '域', '领', '境'],
-                natureWords: ['山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠', '雪原', '峡', '谷', '裂', '渊', '雾']
+                districtWords: ['城', '镇', '村', '堡', '塔', '要塞', '港', '湾', '峡', '谷', '山', '岭', '域', '领', '境', '界', '巢'],
+                natureWords: ['山', '岭', '峰', '平原', '沼泽', '森林', '湖', '岛', '沙漠', '雪原', '峡', '谷', '裂', '渊', '雾', '烬',
+                    '霜', '焰'
+                ]
             },
             wasteland: {
                 roots: ['锈', '骨', '沙', '尘', '铁', '钢', '废', '墟', '裂', '烬', '灰', '荒', '孤', '哨', '堡', '驿', '途', '漠',
-                    '岩', '陷', '残', '蚀', '葬', '骸', '棘', '棘', '砾', '焦', '炭', '硝', '烟', '墟', '城', '壁'
+                    '岩', '陷', '残', '蚀', '葬', '骸', '砾', '焦', '炭', '硝', '烟', '墟', '城', '壁', '棘', '棘', '砾', '焦', '炭',
+                    '硝', '烟', '墟', '城', '壁', '棘'
                 ],
                 roadWords: ['锈蚀', '枯骨', '沙暴', '铁锈', '钢骨', '废土', '废墟', '裂痕', '余烬', '灰烬', '荒芜', '孤寂', '哨站', '尘暴',
-                    '硬核'
+                    '硬核', '末路', '残阳'
                 ],
-                landmarkWords: ['堡', '站', '驿', '镇', '墟', '城', '据点', '营地', '哨塔', '仓库', '工厂', '铁路', '水塔', '岗哨'],
-                districtWords: ['区', '域', '层', '带', '圈', '地', '墟', '镇', '堡', '隅', '界'],
-                natureWords: ['河', '岭', '沙', '尘', '谷', '裂', '漠', '岩', '石', '丘', '坑', '隙']
+                landmarkWords: ['堡', '站', '驿', '镇', '墟', '城', '据点', '营地', '哨塔', '仓库', '工厂', '铁路', '水塔', '岗哨',
+                    '避难所', '油井'
+                ],
+                districtWords: ['区', '域', '层', '带', '圈', '地', '墟', '镇', '堡', '隅', '界', '谷', '坑'],
+                natureWords: ['河', '岭', '沙', '尘', '谷', '裂', '漠', '岩', '石', '丘', '坑', '隙', '烬', '灰', '荒']
+            },
+            ancient: {
+                roots: ['永', '安', '宁', '平', '和', '长', '乐', '康', '泰', '祥', '瑞', '福', '德', '仁', '义', '礼', '智',
+                    '信', '诚', '敬', '忠', '孝', '廉', '节', '贞', '刚', '毅', '勇', '武', '文', '雅', '韵', '致', '朴', '素', '淡',
+                    '泊', '悠', '远', '高', '洁', '清', '明', '正', '直', '宏', '阔', '康', '庄', '永', '恒', '昌', '隆'
+                ],
+                roadWords: ['御', '皇', '帝', '王', '公', '侯', '伯', '子', '男', '大夫', '士', '卿', '相', '府', '邸', '苑'],
+                landmarkWords: ['宫殿', '庙宇', '祠堂', '书院', '阁楼', '高台', '祭坛', '陵墓', '碑林', '古渡', '驿站', '烽火台'],
+                districtWords: ['都', '城', '邑', '郡', '县', '乡', '里', '亭', '坊', '市', '镇', '驿', '关', '塞'],
+                natureWords: ['山', '川', '泽', '渊', '林', '野', '原', '麓', '谷', '涧', '溪', '泉', '瀑', '潭', '屿', '渚']
+            },
+            ocean: {
+                roots: ['海', '洋', '浪', '潮', '汐', '波', '涛', '涌', '沧', '溟', '浩', '瀚', '渺', '茫', '蔚', '蓝', '碧', '澄',
+                    '澈', '深', '渊', '礁', '屿', '岛', '港', '湾', '浦', '浜', '滩', '岸', '堤', '堰'
+                ],
+                roadWords: ['航', '海', '远', '洋', '深', '蓝', '白', '浪', '航', '风', '帆'],
+                landmarkWords: ['灯塔', '码头', '海港', '渡口', '观海台', '海洋馆', '水族馆', '渔港', '船坞', '锚地'],
+                districtWords: ['湾', '港', '浦', '滨', '海', '岛', '屿', '礁', '洲', '渚', '汀'],
+                natureWords: ['海', '洋', '湾', '港', '浦', '滨', '滩', '潮', '汐', '浪', '涛', '渊', '礁', '屿', '岛', '岸']
+            },
+            celestial: {
+                roots: ['日', '月', '星', '辰', '云', '霞', '雾', '霜', '雪', '雨', '风', '雷', '电', '虹', '岚', '霭', '霁', '曦',
+                    '曜', '昶', '昱', '晨', '暮', '曙', '夕', '夜', '朝', '晚', '春', '夏', '秋', '冬', '晴', '阴', '明', '晦',
+                    '皓', '皎', '煌', '辉', '光'
+                ],
+                roadWords: ['天', '穹', '宇', '宙', '星', '光', '曜', '明', '皓', '皎'],
+                landmarkWords: ['观星台', '天文台', '日晷', '星塔', '观月阁', '天坛', '星宫', '银河渡口'],
+                districtWords: ['天', '星', '辰', '云', '霄', '汉', '河', '斗', '宫', '宿'],
+                natureWords: ['天', '空', '云', '霞', '星', '辰', '日', '月', '风', '雨', '雪', '霜', '雷', '电']
             }
-        };
-
-        const REGION_NAMES = {
-            chinese: '中式',
-            japanese: '日式',
-            western: '西式',
-            cyber: '赛博',
-            fantasy: '奇幻',
-            wasteland: '废土'
         };
 
         // ================================================================
@@ -1141,6 +1275,10 @@
         let currentRegion = 'chinese';
         let currentMode = 'station';
         let currentTheme = 'dark';
+        let rootFilter = 'all';
+        let styleIntensity = 50;
+        let suffixChanceValue = 40;
+        let archaicLevel = 20;
 
         // ================================================================
         //  5. 核心生成逻辑
@@ -1158,14 +1296,35 @@
             return false;
         }
 
+        function getFilteredRoots(region, filter) {
+            const lexicon = REGION_LEXICON[region] || REGION_LEXICON.chinese;
+            let roots = lexicon.roots || ALL_ROOTS;
+            if (filter === 'all') return roots;
+            const catRoots = ROOT_CATEGORIES[filter] || [];
+            return roots.filter(r => catRoots.includes(r));
+        }
+
         function generateNames(count, types, lengths, region, mode) {
             const lexicon = REGION_LEXICON[region] || REGION_LEXICON.chinese;
             const allSuffixes = suffixes.length > 0 ? suffixes : DEFAULT_SUFFIXES;
             const nameSet = new Set();
             const names = [];
             let attempts = 0;
-            const maxAttempts = count * 40;
+            const maxAttempts = count * 50;
             const isStationMode = (mode === 'station');
+            const sc = suffixChanceValue / 100;
+            const arch = archaicLevel / 100;
+
+            // 获取过滤后的词根
+            let roots = getFilteredRoots(region, rootFilter);
+            if (roots.length === 0) roots = lexicon.roots || ALL_ROOTS;
+
+            // 古风词根混合
+            let archRoots = [];
+            if (arch > 0.1) {
+                const ancientLexicon = REGION_LEXICON.ancient || REGION_LEXICON.chinese;
+                archRoots = ancientLexicon.roots || [];
+            }
 
             while (names.length < count && attempts < maxAttempts) {
                 attempts++;
@@ -1173,35 +1332,49 @@
                 const length = pick(lengths);
                 let wordPool = [];
                 let suffix = '';
-                const suffixChance = isStationMode ? 0.45 : 0.20;
 
+                // 根据类型选择词根池
                 switch (type) {
                     case 'road':
-                        wordPool = lexicon.roadWords || lexicon.roots;
-                        suffix = isStationMode ? '路' : pick(['路', '街', '道', '巷']);
+                        wordPool = (lexicon.roadWords || lexicon.roots || ALL_ROOTS);
+                        suffix = isStationMode ? '路' : pick(['路', '街', '道', '巷', '弄']);
                         break;
                     case 'landmark':
-                        wordPool = lexicon.landmarkWords || lexicon.roots;
-                        suffix = isStationMode ? pick(['公园', '广场', '中心', '塔', '站', '港', '桥', '宫', '殿', '阁']) :
-                            pick(['公园', '广场', '中心', '塔', '宫', '殿', '阁', '楼', '台', '亭']);
+                        wordPool = (lexicon.landmarkWords || lexicon.roots || ALL_ROOTS);
+                        suffix = isStationMode ? pick(['公园', '广场', '中心', '塔', '站', '港', '桥', '宫', '殿', '阁', '馆', '院']) :
+                            pick(['公园', '广场', '中心', '塔', '宫', '殿', '阁', '楼', '台', '亭', '院', '馆', '寺']);
                         break;
                     case 'district':
-                        wordPool = lexicon.districtWords || lexicon.roots;
+                        wordPool = (lexicon.districtWords || lexicon.roots || ALL_ROOTS);
                         suffix = pick(allSuffixes);
                         break;
                     case 'nature':
-                        wordPool = lexicon.natureWords || lexicon.roots;
+                        wordPool = (lexicon.natureWords || lexicon.roots || ALL_ROOTS);
                         suffix = pick(allSuffixes);
+                        break;
+                    case 'historical':
+                        wordPool = (REGION_LEXICON.ancient?.roots || ALL_ROOTS);
+                        suffix = pick(['镇', '关', '驿', '城', '堡', '寺', '庙', '祠', '宫', '殿']);
+                        break;
+                    case 'myth':
+                        wordPool = (REGION_LEXICON.fantasy?.roots || ALL_ROOTS);
+                        suffix = pick(['山', '岭', '峰', '谷', '渊', '境', '界', '域', '宫', '殿', '塔', '堡']);
                         break;
                     case 'mixed':
                     default:
-                        wordPool = lexicon.roots;
+                        wordPool = roots;
                         suffix = pick(allSuffixes);
                         break;
                 }
 
+                // 古风混合
+                if (arch > 0.1 && Math.random() < arch && archRoots.length > 0) {
+                    const mixPool = [...wordPool, ...archRoots];
+                    wordPool = mixPool;
+                }
+
                 let candidate = '';
-                const useSuffix = Math.random() < suffixChance && suffix;
+                const useSuffix = Math.random() < sc && suffix;
 
                 if (length === 2) {
                     if (useSuffix) {
@@ -1210,7 +1383,7 @@
                         const a = pick(wordPool);
                         let b = pick(wordPool);
                         let safety = 0;
-                        while (a === b && safety < 20) { b = pick(wordPool);
+                        while (a === b && safety < 25) { b = pick(wordPool);
                             safety++; }
                         candidate = a + b;
                     }
@@ -1219,7 +1392,7 @@
                         const a = pick(wordPool);
                         let b = pick(wordPool);
                         let safety = 0;
-                        while (a === b && safety < 20) { b = pick(wordPool);
+                        while (a === b && safety < 25) { b = pick(wordPool);
                             safety++; }
                         candidate = a + b + suffix;
                     } else {
@@ -1227,14 +1400,14 @@
                         let b = pick(wordPool);
                         let c = pick(wordPool);
                         let safety = 0;
-                        while ((a === b || b === c || a === c) && safety < 30) {
+                        while ((a === b || b === c || a === c) && safety < 35) {
                             b = pick(wordPool);
                             c = pick(wordPool);
                             safety++;
                         }
                         candidate = a + b + c;
                     }
-                } else {
+                } else if (length === 4) {
                     if (useSuffix) {
                         const a = pick(wordPool);
                         let b = pick(wordPool);
@@ -1252,7 +1425,7 @@
                         let c = pick(wordPool);
                         let d = pick(wordPool);
                         let safety = 0;
-                        while ((a === b || b === c || c === d || a === c || a === d || b === d) && safety < 40) {
+                        while ((a === b || b === c || c === d || a === c || a === d || b === d) && safety < 45) {
                             b = pick(wordPool);
                             c = pick(wordPool);
                             d = pick(wordPool);
@@ -1260,12 +1433,42 @@
                         }
                         candidate = a + b + c + d;
                     }
+                } else { // 5字
+                    if (useSuffix) {
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let c = pick(wordPool);
+                        let d = pick(wordPool);
+                        let safety = 0;
+                        while ((a === b || b === c || c === d || a === c || a === d || b === d) && safety < 40) {
+                            b = pick(wordPool);
+                            c = pick(wordPool);
+                            d = pick(wordPool);
+                            safety++;
+                        }
+                        candidate = a + b + c + d + suffix;
+                    } else {
+                        const a = pick(wordPool);
+                        let b = pick(wordPool);
+                        let c = pick(wordPool);
+                        let d = pick(wordPool);
+                        let e = pick(wordPool);
+                        let safety = 0;
+                        while ((a === b || b === c || c === d || d === e || a === c || a === d || a === e || b === d || b ===
+                                e || c === e) && safety < 55) {
+                            b = pick(wordPool);
+                            c = pick(wordPool);
+                            d = pick(wordPool);
+                            e = pick(wordPool);
+                            safety++;
+                        }
+                        candidate = a + b + c + d + e;
+                    }
                 }
 
                 if (candidate.length < 2) continue;
                 if (hasRepeatedChar(candidate)) continue;
                 if (nameSet.has(candidate)) continue;
-                if (allSuffixes.includes(candidate) || allSuffixes.some(suf => candidate === suf)) continue;
 
                 nameSet.add(candidate);
                 const typeLabel = {
@@ -1273,21 +1476,13 @@
                     landmark: '地标',
                     district: '片区',
                     nature: '自然',
-                    mixed: '混合'
+                    mixed: '混合',
+                    historical: '历史',
+                    myth: '神话'
                 } [type] || '未知';
                 names.push({ name: candidate, type: typeLabel, length: candidate.length });
             }
 
-            let fallbackPool = lexicon.roots.slice();
-            while (names.length < count && fallbackPool.length > 0) {
-                const base = fallbackPool.pop();
-                const suf = pick(allSuffixes);
-                const cand = base + suf;
-                if (!nameSet.has(cand) && cand.length >= 2 && !hasRepeatedChar(cand) && !allSuffixes.includes(cand)) {
-                    nameSet.add(cand);
-                    names.push({ name: cand, type: '混合', length: cand.length });
-                }
-            }
             return names;
         }
 
@@ -1300,6 +1495,7 @@
         const generateBtn = document.getElementById('generateBtn');
         const copyAllBtn = document.getElementById('copyAllBtn');
         const clearBtn = document.getElementById('clearBtn');
+        const exportJsonBtn = document.getElementById('exportJsonBtn');
         const countInput = document.getElementById('countInput');
         const suffixTags = document.getElementById('suffixTags');
         const suffixInput = document.getElementById('suffixInput');
@@ -1307,7 +1503,6 @@
         const suffixCount = document.getElementById('suffixCount');
         const regionSelect = document.getElementById('regionSelect');
         const themeRandomBtn = document.getElementById('themeRandomBtn');
-        const linePlan = document.getElementById('linePlan');
         const modeSelector = document.getElementById('modeSelector');
         const modeSubtitle = document.getElementById('modeSubtitle');
         const themeToggleNav = document.getElementById('themeToggleNav');
@@ -1315,16 +1510,36 @@
         const len2 = document.getElementById('len2');
         const len3 = document.getElementById('len3');
         const len4 = document.getElementById('len4');
+        const len5 = document.getElementById('len5');
         const typeChecks = document.querySelectorAll('.type-check');
 
-        // --- 主题切换（导航栏与主页面联动） ---
+        // 新增统计元素
+        const uniqueCount = document.getElementById('uniqueCount');
+        const maxLenStat = document.getElementById('maxLenStat');
+        const minLenStat = document.getElementById('minLenStat');
+        const avgLenStat = document.getElementById('avgLenStat');
+        const rootCountStat = document.getElementById('rootCountStat');
+        const suffixCountStat = document.getElementById('suffixCountStat');
+
+        // 滑块
+        const styleIntensitySlider = document.getElementById('styleIntensity');
+        const intensityDisplay = document.getElementById('intensityDisplay');
+        const suffixChanceSlider = document.getElementById('suffixChance');
+        const suffixChanceDisplay = document.getElementById('suffixChanceDisplay');
+        const archaicSlider = document.getElementById('archaicLevel');
+        const archaicDisplay = document.getElementById('archaicDisplay');
+
+        // 词库筛选标签
+        const filterTags = document.querySelectorAll('#rootFilterTags .tag-item');
+
+        // --- 主题切换 ---
         function setTheme(theme) {
             currentTheme = theme;
             document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : '');
             if (themeToggleNav) {
                 themeToggleNav.textContent = theme === 'light' ? '🌙' : '☀️';
             }
-            particles.forEach(p => p.opacity = Math.random() * 0.3 + 0.05);
+            particles.forEach(p => p.opacity = Math.random() * 0.25 + 0.05);
         }
 
         if (themeToggleNav) {
@@ -1334,7 +1549,6 @@
             });
         }
 
-        // 监听主页面主题变化，同步导航栏按钮图标
         const observer = new MutationObserver(() => {
             const html = document.documentElement;
             const isLight = html.getAttribute('data-theme') === 'light';
@@ -1358,11 +1572,13 @@
             });
         });
 
+        // --- 渲染后缀 ---
         function renderSuffixes() {
             suffixTags.innerHTML = suffixes.map(s =>
                 `<span class="suffix-tag">${s}</span>`
             ).join('');
             suffixCount.textContent = `当前后缀：${suffixes.length} 项`;
+            if (suffixCountStat) suffixCountStat.textContent = suffixes.length;
         }
 
         function addSuffix() {
@@ -1377,6 +1593,7 @@
             suffixInput.value = '';
         }
 
+        // --- 获取选中项 ---
         function getSelectedTypes() {
             const selected = [];
             typeChecks.forEach(cb => { if (cb.checked) selected.push(cb.value); });
@@ -1388,6 +1605,7 @@
             if (len2.checked) lengths.push(2);
             if (len3.checked) lengths.push(3);
             if (len4.checked) lengths.push(4);
+            if (len5.checked) lengths.push(5);
             return lengths;
         }
 
@@ -1395,6 +1613,7 @@
             return getSelectedTypes().length > 0 && getSelectedLengths().length > 0;
         }
 
+        // --- 生成与渲染 ---
         function generateAndRender() {
             if (!hasAnySelection()) {
                 alert('生成失败，请先勾选/设置提供的功能');
@@ -1406,6 +1625,7 @@
             const names = generateNames(count, types, lengths, currentRegion, currentMode);
             results = names;
             renderResults(names);
+            updateStats(names);
         }
 
         function renderResults(names) {
@@ -1425,6 +1645,8 @@
                 </div>`
             ).join('');
             resultCount.textContent = names.length;
+            if (uniqueCount) uniqueCount.textContent = new Set(names.map(n => n.name)).size;
+
             document.querySelectorAll('.copy-single').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const idx = parseInt(this.dataset.index);
@@ -1439,6 +1661,43 @@
             });
         }
 
+        function updateStats(names) {
+            if (!names || names.length === 0) {
+                if (maxLenStat) maxLenStat.textContent = '0';
+                if (minLenStat) minLenStat.textContent = '0';
+                if (avgLenStat) avgLenStat.textContent = '0';
+                return;
+            }
+            const lens = names.map(n => n.length);
+            const max = Math.max(...lens);
+            const min = Math.min(...lens);
+            const avg = (lens.reduce((a, b) => a + b, 0) / lens.length).toFixed(1);
+            if (maxLenStat) maxLenStat.textContent = max;
+            if (minLenStat) minLenStat.textContent = min;
+            if (avgLenStat) avgLenStat.textContent = avg;
+        }
+
+        // --- 导出JSON ---
+        function exportJson() {
+            if (results.length === 0) { alert('没有数据可导出'); return; }
+            const data = {
+                version: '1.0',
+                generated: new Date().toISOString(),
+                mode: currentMode,
+                region: currentRegion,
+                count: results.length,
+                names: results
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `架空之名_${currentRegion}_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // --- 复制与清空 ---
         function copyAll() {
             const names = results.map(r => r.name).join('\n');
             if (!names) return;
@@ -1451,12 +1710,43 @@
         function clearResults() {
             results = [];
             renderResults([]);
+            updateStats([]);
         }
 
         function setRegion(region) {
             currentRegion = region;
             regionSelect.value = region;
+            // 更新词根计数
+            const roots = getFilteredRoots(region, rootFilter);
+            if (rootCountStat) rootCountStat.textContent = roots.length;
         }
+
+        // --- 滑块事件 ---
+        styleIntensitySlider.addEventListener('input', function() {
+            styleIntensity = parseInt(this.value);
+            intensityDisplay.textContent = styleIntensity;
+        });
+        suffixChanceSlider.addEventListener('input', function() {
+            suffixChanceValue = parseInt(this.value);
+            suffixChanceDisplay.textContent = suffixChanceValue;
+        });
+        archaicSlider.addEventListener('input', function() {
+            archaicLevel = parseInt(this.value);
+            archaicDisplay.textContent = archaicLevel;
+        });
+
+        // --- 词库筛选标签 ---
+        filterTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                filterTags.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                rootFilter = this.dataset.filter;
+                // 更新词根计数
+                const roots = getFilteredRoots(currentRegion, rootFilter);
+                if (rootCountStat) rootCountStat.textContent = roots.length;
+                generateAndRender();
+            });
+        });
 
         // ================================================================
         //  7. 事件绑定
@@ -1465,11 +1755,14 @@
         generateBtn.addEventListener('click', generateAndRender);
         copyAllBtn.addEventListener('click', copyAll);
         clearBtn.addEventListener('click', clearResults);
+        exportJsonBtn.addEventListener('click', exportJson);
         addSuffixBtn.addEventListener('click', addSuffix);
         suffixInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addSuffix(); });
 
         regionSelect.addEventListener('change', function() {
             currentRegion = this.value;
+            const roots = getFilteredRoots(currentRegion, rootFilter);
+            if (rootCountStat) rootCountStat.textContent = roots.length;
             generateAndRender();
         });
 
@@ -1480,7 +1773,7 @@
             generateAndRender();
         });
 
-        [len2, len3, len4].forEach(cb => {
+        [len2, len3, len4, len5].forEach(cb => {
             cb.addEventListener('change', generateAndRender);
         });
         typeChecks.forEach(cb => {
@@ -1500,12 +1793,19 @@
         renderSuffixes();
         results = [];
         renderResults([]);
+        updateStats([]);
         setTheme('dark');
 
-        console.log(' 地名站名生成器 已加载 (含居中导航栏+工具下拉)');
+        // 初始化词根计数
+        const initRoots = getFilteredRoots(currentRegion, rootFilter);
+        if (rootCountStat) rootCountStat.textContent = initRoots.length;
+        if (suffixCountStat) suffixCountStat.textContent = suffixes.length;
+
+        console.log(' 架空之名 已加载 (功能大幅拓展)');
+        console.log(` 词根总数：${ALL_ROOTS.length}`);
         console.log(` 后缀库：${suffixes.length} 项`);
-        console.log(` 当前风格：${REGION_NAMES[currentRegion] || currentRegion}`);
-        console.log(` 当前模式：${currentMode === 'station' ? '站名' : '地名'}`);
+        console.log(` 风格：${REGION_LEXICON[currentRegion] ? Object.keys(REGION_LEXICON).find(k => k === currentRegion) : 'chinese'}`);
+        console.log(` 模式：${currentMode === 'station' ? '站名' : '地名'}`);
     </script>
 </body>
 </html>
