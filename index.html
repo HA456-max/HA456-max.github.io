@@ -15,15 +15,12 @@
         body {
             font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             background: #f5f3f0;
-            display: flex;
-            justify-content: center;
-            padding: 0 20px;
             color: #2c2c2c;
-            padding-top: 70px; /* 为固定导航留出空间 */
             min-height: 100vh;
+            padding-top: 70px; /* 为固定导航留出空间 */
         }
 
-        /* ===== 固定顶部导航栏（与架空之名风格一致） ===== */
+        /* ===== 固定顶部导航栏 ===== */
         .main-nav {
             position: fixed;
             top: 0;
@@ -180,7 +177,7 @@
             flex-shrink: 0;
         }
 
-        /* 响应式导航 */
+        /* ===== 响应式导航 ===== */
         @media (max-width: 780px) {
             .nav-brand .brand-link {
                 font-size: 0.85rem;
@@ -215,185 +212,246 @@
             }
             body {
                 padding-top: 60px;
-                padding-left: 8px;
-                padding-right: 8px;
             }
         }
 
-        /* ===== 主卡片 ===== */
-        .card {
-            max-width: 700px;
+        /* ===== 全屏主容器 ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 40px;
             width: 100%;
-            background: #ffffff;
-            border-radius: 32px;
-            padding: 40px 36px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
         }
 
-        h1 {
+        /* ===== 头部标题区 ===== */
+        .page-header {
+            padding: 20px 0 10px;
+        }
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .page-header .sub {
+            color: #888;
+            font-size: 17px;
+            margin-top: 4px;
+        }
+
+        /* ===== 工具模块网格 ===== */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 22px 22px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-card .icon {
             font-size: 28px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .tool-card .name {
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 4px;
         }
-
-        .sub {
-            color: #888;
-            font-size: 16px;
-            margin-bottom: 12px;
+        .tool-card .desc {
+            font-size: 14px;
+            color: #777;
+            line-height: 1.5;
         }
-
-        .tag-list {
-            margin-bottom: 20px;
-        }
-
-        .tag {
+        .tool-card .badge {
             display: inline-block;
+            margin-top: 10px;
             background: #f0ebe6;
             border-radius: 30px;
             padding: 2px 14px;
-            font-size: 13px;
-            color: #555;
-            margin-right: 6px;
-            margin-bottom: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+        .tool-card .badge.new {
+            background: #e8f0e8;
+            color: #3a6b4a;
+        }
+        .tool-card .badge.soon {
+            background: #f0ece0;
+            color: #8a7a5a;
         }
 
+        /* ===== 宣传/其他模块 ===== */
         .section-title {
             font-size: 20px;
             font-weight: 600;
-            margin: 28px 0 14px 0;
+            margin: 40px 0 16px 0;
             padding-bottom: 6px;
             border-bottom: 2px solid #eee;
         }
 
-        .item {
+        .promo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .promo-card {
             background: #f9f7f5;
             border-radius: 16px;
-            padding: 14px 18px;
-            margin-bottom: 10px;
+            padding: 18px 20px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: 0.2s;
         }
-
-        .item .title {
-            font-weight: 600;
-            font-size: 16px;
+        .promo-card:hover {
+            background: #f5f2ee;
         }
-
-        .item .desc {
+        .promo-card .label {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .promo-card .value {
             font-size: 14px;
             color: #666;
             margin-top: 2px;
         }
 
-        .item .btn-group {
-            margin-top: 8px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-link {
-            display: inline-block;
-            background: #2c2c2c;
-            color: white;
-            padding: 5px 20px;
-            border-radius: 40px;
-            font-size: 13px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.15s;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-link:hover {
-            background: #111;
-            transform: scale(0.96);
-        }
-        .btn-link.outline {
-            background: transparent;
-            color: #2c2c2c;
-            border: 1.5px solid #d4c5b2;
-        }
-        .btn-link.outline:hover {
-            background: #f0ebe6;
-        }
-
         .footer {
-            margin-top: 28px;
+            margin-top: 40px;
             font-size: 13px;
             color: #aaa;
             text-align: center;
             border-top: 1px solid #eee;
-            padding-top: 18px;
+            padding-top: 20px;
         }
 
-        @media (max-width: 480px) {
-            .card {
-                padding: 24px 16px;
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 12px 30px;
             }
-            .social-item {
-                flex-direction: column;
-                align-items: stretch;
+            .page-header h1 {
+                font-size: 26px;
+            }
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            .promo-grid {
+                grid-template-columns: 1fr;
+            }
+            .tool-card {
+                padding: 18px 16px 18px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== 固定顶部导航栏（与架空之名风格一致） ===== -->
+    <!-- ===== 固定顶部导航栏 ===== -->
     <nav class="main-nav" id="mainNav">
         <div class="nav-inner">
             <div class="nav-brand">
                 <a href="#" class="brand-link">HA<span>工具</span></a>
             </div>
             <ul class="nav-links">
-                <li><a href="https://ha456-max.github.io/" class="nav-link active">主页</a></li>
+                <li><a href="#" class="nav-link active">主页</a></li>
                 <li class="nav-dropdown">
                     <a href="#" class="nav-link dropdown-toggle" id="toolsToggle">工具 ▾</a>
                     <ul class="dropdown-menu" id="toolsMenu">
-                        <li><a href="generated.html" class="dropdown-item">架空站名/地名生成器</a></li>
-                        <li><a href="#" class="dropdown-item">线路规划工具</a></li>
-                        <li><a href="#" class="dropdown-item">地名风格转换</a></li>
-                        <li><a href="#" class="dropdown-item">批量导出/导入</a></li>
+                        <li><a href="#generator" class="dropdown-item">架空站名/地名生成器</a></li>
+                        <li><a href="#plan" class="dropdown-item">线路规划工具</a></li>
+                        <li><a href="#style" class="dropdown-item">地名风格转换</a></li>
+                        <li><a href="#batch" class="dropdown-item">批量导出/导入</a></li>
                     </ul>
                 </li>
-                <li><a href="#" class="nav-link">宣传</a></li>
+                <li><a href="#promo" class="nav-link">宣传</a></li>
                 <li><a href="#" class="nav-link">设置</a></li>
                 <li><a href="#" class="nav-link">赞助</a></li>
-                <li><a href="https://github.com/HA456-max/HA456-max.github.io" class="nav-link">源码</a></li>
+                <li><a href="#" class="nav-link">源码</a></li>
             </ul>
-            <div class="nav-actions">
-                <!-- 此处可放置主题切换等，保持与架空之名一致 -->
-            </div>
+            <div class="nav-actions"></div>
         </div>
     </nav>
 
-    <!-- ===== 主卡片 ===== -->
-    <div class="card">
+    <!-- ===== 全屏主容器 ===== -->
+    <div class="container">
 
-        <h1>HA</h1>
-        <div class="sub">你好，我是HA</div>
-        <div class="sub">这个东东是我借助AI做的一个小平台，蛮多功能都待定或是在施工</div>
+        <!-- 头部 -->
+        <div class="page-header">
+            <h1>HA 工具导航</h1>
+            <div class="sub">你好，我是HA · 借助AI搭建的小平台，持续施工中 🚧</div>
+        </div>
 
-        <div class="section-title">工具</div>
+        <!-- ===== 工具模块（点击卡片跳转） ===== -->
+        <div class="tool-grid" id="generator">
+            <a href="#" class="tool-card" target="_blank">
+                <div class="name">工具</div>
+                <div class="desc">工具大合集</div>
+                <span class="badge new">可用</span>
+            </a>
 
-        <div class="item">
-            <div class="title">架空站名/地名生成器</div>
-            <div class="desc">基于全国站名/地名字频统计，实现的一键生成合理可直接使用的架空站名</div>
-            <div class="btn-group">
-                <a href="generated.html" class="btn-link" target="_blank">前往使用</a>
-                <a href="https://github.com/HA456-max/HAtool" class="btn-link outline" target="_blank">github源代码</a>
+            <a href="#" class="tool-card" onclick="alert('开发中'); return false;">
+               
+                <div class="name">施工中</div>
+                <div class="desc">施工中</div>
+                <span class="badge soon">施工中</span>
+            </a>
+
+            <a href="#" class="tool-card" onclick="alert('开发中'); return false;">
+             
+                <div class="name">施工中</div>
+                <div class="desc">施工中</div>
+                <span class="badge soon">施工中</span>
+            </a>
+
+            <a href="#" class="tool-card" onclick="alert('开发中'); return false;">
+             
+                <div class="name">施工中</div>
+                <div class="desc">施工中</div>
+                <span class="badge soon">施工中</span>
+            </a>
+        </div>
+
+        <!-- ===== 宣传模块 ===== -->
+        <div class="section-title" id="promo"> 宣传</div>
+        <div class="promo-grid">
+            <div class="promo-card">
+                <div class="label">GitHub 开源</div>
+                <div class="value">代码完全开源，欢迎 Star</div>
+                <a href="https://github.com/HA456-max/HAtool" target="_blank" style="display:inline-block;margin-top:6px;font-size:13px;color:#555;text-decoration:underline;">github.com/HA456-max/HAtool</a>
+            </div>
+            <div class="promo-card">
+                <div class="label">反馈与建议</div>
+                <div class="value">如果你有好的想法，欢迎提 Issue 或 PR</div>
+            </div>
+            <div class="promo-card">
+                <div class="label">关于 HA</div>
+                <div class="value">一个借助 AI 打造的小工具平台，持续迭代中</div>
             </div>
         </div>
 
-        <div style="font-size: 14px; color: #999; margin: 4px 0 0 4px;">还有没了，以后再说</div>
-
-        <div class="section-title">另附：宣传</div>
-
-        <div class="footer">© HA</div>
+        <!-- ===== 页脚 ===== -->
+        <div class="footer">© HA · 架空之名 · 持续迭代中</div>
     </div>
 
     <script>
         // ================================================================
-        // 导航栏下拉菜单交互（与架空之名一致）
+        // 导航栏下拉菜单交互
         // ================================================================
         (function() {
             const toggleBtn = document.getElementById('toolsToggle');
