@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HA</title>
+    <title>HA · 工具导航</title>
     <style>
+        /* ===== 全局重置 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -16,10 +17,210 @@
             background: #f5f3f0;
             display: flex;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 0 20px;
             color: #2c2c2c;
+            padding-top: 70px; /* 为固定导航留出空间 */
+            min-height: 100vh;
         }
 
+        /* ===== 固定顶部导航栏（与架空之名风格一致） ===== */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            width: 100%;
+            gap: 0.8rem;
+            flex-wrap: nowrap;
+        }
+
+        .nav-brand .brand-link {
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: #2c2c2c;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .nav-brand .brand-link span {
+            font-weight: 300;
+            color: #888;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1 1 auto;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .nav-links li {
+            position: relative;
+            list-style: none;
+            flex-shrink: 0;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 30px;
+            transition: 0.25s;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .nav-link:hover {
+            color: #2c2c2c;
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+        .nav-link.active {
+            color: #2c2c2c;
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+        .dropdown-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 14px;
+            padding: 0.3rem 0;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
+            transform: translateX(-50%) translateY(-6px);
+            z-index: 100;
+            list-style: none;
+        }
+        .dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.4rem 1.2rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.82rem;
+            transition: 0.2s;
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 0;
+        }
+        .dropdown-item:hover {
+            color: #2c2c2c;
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .dropdown-item:first-child {
+            border-radius: 14px 14px 0 0;
+        }
+        .dropdown-item:last-child {
+            border-radius: 0 0 14px 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        /* 响应式导航 */
+        @media (max-width: 780px) {
+            .nav-brand .brand-link {
+                font-size: 0.85rem;
+            }
+            .nav-link {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .dropdown-menu {
+                min-width: 140px;
+                left: 0;
+                transform: translateX(0);
+            }
+            .dropdown-menu.open {
+                transform: translateX(0) translateY(0);
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-link {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.4rem;
+            }
+            .dropdown-menu {
+                min-width: 120px;
+            }
+            .dropdown-item {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .nav-brand .brand-link {
+                font-size: 0.7rem;
+            }
+            body {
+                padding-top: 60px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+        }
+
+        /* ===== 主卡片 ===== */
         .card {
             max-width: 700px;
             width: 100%;
@@ -82,51 +283,11 @@
             margin-top: 2px;
         }
 
-        .social-item {
-            background: #f9f7f5;
-            border-radius: 16px;
-            padding: 14px 18px;
-            margin-bottom: 10px;
+        .item .btn-group {
+            margin-top: 8px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 8px;
             flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .social-item .label {
-            font-weight: 500;
-            font-size: 15px;
-        }
-
-        .social-item .value {
-            font-size: 14px;
-            color: #555;
-            background: white;
-            padding: 2px 14px;
-            border-radius: 20px;
-            border: 1px solid #e0d8d0;
-        }
-
-        .btn {
-            background: #2c2c2c;
-            border: none;
-            color: white;
-            padding: 5px 18px;
-            border-radius: 40px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.15s;
-            font-weight: 500;
-        }
-
-        .btn:hover {
-            background: #111;
-            transform: scale(0.96);
-        }
-
-        .btn.copied {
-            background: #4a7a5c;
         }
 
         .btn-link {
@@ -142,33 +303,17 @@
             border: none;
             cursor: pointer;
         }
-
         .btn-link:hover {
             background: #111;
             transform: scale(0.96);
         }
-
         .btn-link.outline {
             background: transparent;
             color: #2c2c2c;
             border: 1.5px solid #d4c5b2;
         }
-
         .btn-link.outline:hover {
             background: #f0ebe6;
-        }
-
-        .about-box {
-            background: #f9f7f5;
-            border-radius: 16px;
-            padding: 16px 18px;
-            font-size: 14px;
-            line-height: 1.8;
-            color: #444;
-        }
-
-        .about-box strong {
-            color: #1a1a1a;
         }
 
         .footer {
@@ -193,26 +338,96 @@
 </head>
 <body>
 
-<div class="card">
-
-    <!-- ===== 标题 ===== -->
-    <h1>HA</h1>
-    <div class="sub">你好，我是HA</div>
-  <div class="sub">这个东东是我借助AI做的一个小平台，蛮多功能都待定或是在施工</div>
-  <div class="section-title">工具</div>
-
-    <div class="item">
-        <div class="title">架空站名/地名生成器</div>
-        <div class="desc">基于全国站名/地名字频统计，实现的一键生成合理可直接使用的架空站名</div>
-        <div style="margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="generated.html" class="btn-link" target="_blank">前往使用</a>
-            <a href="https://github.com/HA456-max/HAtool" class="btn-link outline" target="_blank">github源代码</a>
+    <!-- ===== 固定顶部导航栏（与架空之名风格一致） ===== -->
+    <nav class="main-nav" id="mainNav">
+        <div class="nav-inner">
+            <div class="nav-brand">
+                <a href="#" class="brand-link">HA<span>工具</span></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active">主页</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="toolsToggle">工具 ▾</a>
+                    <ul class="dropdown-menu" id="toolsMenu">
+                        <li><a href="generated.html" class="dropdown-item">架空站名/地名生成器</a></li>
+                        <li><a href="#" class="dropdown-item">线路规划工具</a></li>
+                        <li><a href="#" class="dropdown-item">地名风格转换</a></li>
+                        <li><a href="#" class="dropdown-item">批量导出/导入</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" class="nav-link">宣传</a></li>
+                <li><a href="#" class="nav-link">设置</a></li>
+                <li><a href="#" class="nav-link">赞助</a></li>
+                <li><a href="#" class="nav-link">源码</a></li>
+            </ul>
+            <div class="nav-actions">
+                <!-- 此处可放置主题切换等，保持与架空之名一致 -->
+            </div>
         </div>
+    </nav>
+
+    <!-- ===== 主卡片 ===== -->
+    <div class="card">
+
+        <h1>HA</h1>
+        <div class="sub">你好，我是HA</div>
+        <div class="sub">这个东东是我借助AI做的一个小平台，蛮多功能都待定或是在施工</div>
+
+        <div class="section-title">工具</div>
+
+        <div class="item">
+            <div class="title">架空站名/地名生成器</div>
+            <div class="desc">基于全国站名/地名字频统计，实现的一键生成合理可直接使用的架空站名</div>
+            <div class="btn-group">
+                <a href="generated.html" class="btn-link" target="_blank">前往使用</a>
+                <a href="https://github.com/HA456-max/HAtool" class="btn-link outline" target="_blank">github源代码</a>
+            </div>
+        </div>
+
+        <div style="font-size: 14px; color: #999; margin: 4px 0 0 4px;">还有没了，以后再说</div>
+
+        <div class="section-title">另附：宣传</div>
+
+        <div class="footer">© HA</div>
     </div>
-  <div style="font-size: 14px; color: #999; margin: 4px 0 0 4px;">还有没了，以后再说</div>
-    <div class="section-title">另附：宣传</div>
-    
-  <div class="footer">© HA</div>
-</div>
+
+    <script>
+        // ================================================================
+        // 导航栏下拉菜单交互（与架空之名一致）
+        // ================================================================
+        (function() {
+            const toggleBtn = document.getElementById('toolsToggle');
+            const menu = document.getElementById('toolsMenu');
+
+            if (toggleBtn && menu) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    menu.classList.toggle('open');
+                });
+
+                menu.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        menu.classList.remove('open');
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !toggleBtn.contains(e.target)) {
+                        menu.classList.remove('open');
+                    }
+                });
+            }
+
+            // 导航链接高亮
+            document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        })();
+    </script>
+
 </body>
 </html>
