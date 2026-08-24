@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HA · 工具</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f3f0;
+            color: #2c2c2c;
+            min-height: 100vh;
+            padding-top: 70px; /* 为固定导航留出空间 */
+        }
+
+        /* ===== 固定顶部导航栏 ===== */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            width: 100%;
+            gap: 0.8rem;
+            flex-wrap: nowrap;
+        }
+
+        .nav-brand .brand-link {
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: #2c2c2c;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .nav-brand .brand-link span {
+            font-weight: 300;
+            color: #888;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1 1 auto;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .nav-links li {
+            position: relative;
+            list-style: none;
+            flex-shrink: 0;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 30px;
+            transition: 0.25s;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .nav-link:hover {
+            color: #2c2c2c;
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+        .nav-link.active {
+            color: #2c2c2c;
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+        .dropdown-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 14px;
+            padding: 0.3rem 0;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.2s ease;
+            transform: translateX(-50%) translateY(-6px);
+            z-index: 100;
+            list-style: none;
+        }
+        .dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.4rem 1.2rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.82rem;
+            transition: 0.2s;
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 0;
+        }
+        .dropdown-item:hover {
+            color: #2c2c2c;
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .dropdown-item:first-child {
+            border-radius: 14px 14px 0 0;
+        }
+        .dropdown-item:last-child {
+            border-radius: 0 0 14px 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        /* ===== 响应式导航 ===== */
+        @media (max-width: 780px) {
+            .nav-brand .brand-link {
+                font-size: 0.85rem;
+            }
+            .nav-link {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .dropdown-menu {
+                min-width: 140px;
+                left: 0;
+                transform: translateX(0);
+            }
+            .dropdown-menu.open {
+                transform: translateX(0) translateY(0);
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-link {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.4rem;
+            }
+            .dropdown-menu {
+                min-width: 120px;
+            }
+            .dropdown-item {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .nav-brand .brand-link {
+                font-size: 0.7rem;
+            }
+            body {
+                padding-top: 60px;
+            }
+        }
+
+        /* ===== 全屏主容器 ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 40px;
+            width: 100%;
+        }
+
+        /* ===== 头部标题区 ===== */
+        .page-header {
+            padding: 20px 0 10px;
+        }
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .page-header .sub {
+            color: #888;
+            font-size: 17px;
+            margin-top: 4px;
+        }
+
+        /* ===== 工具模块网格 ===== */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 22px 22px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-card .icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .tool-card .name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .tool-card .desc {
+            font-size: 14px;
+            color: #777;
+            line-height: 1.5;
+        }
+        .tool-card .badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: #f0ebe6;
+            border-radius: 30px;
+            padding: 2px 14px;
+            font-size: 12px;
+            color: #666;
+        }
+        .tool-card .badge.new {
+            background: #e8f0e8;
+            color: #3a6b4a;
+        }
+        .tool-card .badge.soon {
+            background: #f0ece0;
+            color: #8a7a5a;
+        }
+
+        /* ===== 宣传/其他模块 ===== */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 40px 0 16px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .promo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .promo-card {
+            background: #f9f7f5;
+            border-radius: 16px;
+            padding: 18px 20px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: 0.2s;
+        }
+        .promo-card:hover {
+            background: #f5f2ee;
+        }
+        .promo-card .label {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .promo-card .value {
+            font-size: 14px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #aaa;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 12px 30px;
+            }
+            .page-header h1 {
+                font-size: 26px;
+            }
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            .promo-grid {
+                grid-template-columns: 1fr;
+            }
+            .tool-card {
+                padding: 18px 16px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 固定顶部导航栏 ===== -->
+    <nav class="main-nav" id="mainNav">
+        <div class="nav-inner">
+            <div class="nav-brand">
+                <a href="#" class="brand-link">HA<span>工具</span></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active">主页</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="toolsToggle">工具 ▾</a>
+                    <ul class="dropdown-menu" id="toolsMenu">
+                        <li><a href="#generator" class="dropdown-item">架空站名/地名生成器</a></li>
+                        <li><a href="#plan" class="dropdown-item">线路规划工具</a></li>
+                        <li><a href="#style" class="dropdown-item">地名风格转换</a></li>
+                        <li><a href="#batch" class="dropdown-item">批量导出/导入</a></li>
+                    </ul>
+                </li>
+                <li><a href="#promo" class="nav-link">宣传</a></li>
+                <li><a href="#" class="nav-link">设置</a></li>
+                <li><a href="#" class="nav-link">赞助</a></li>
+                <li><a href="#" class="nav-link">源码</a></li>
+            </ul>
+            <div class="nav-actions"></div>
+        </div>
+    </nav>
+
+    <!-- ===== 全屏主容器 ===== -->
+    <div class="container">
+
+        <!-- ===== 工具模块（点击卡片跳转） ===== -->
+        <div class="tool-grid" id="generator">
+            <a href="generated.html" class="tool-card" target="_blank">
+                <div class="name">架空站名/地名生成器</div>
+                <div class="desc">基于全国站名/地名字频统计，一键生成合理可用的架空站名</div>
+                <span class="badge new">可用</span>
+            </a>
+        </div>
+    <script>
+        // ================================================================
+        // 导航栏下拉菜单交互
+        // ================================================================
+        (function() {
+            const toggleBtn = document.getElementById('toolsToggle');
+            const menu = document.getElementById('toolsMenu');
+
+            if (toggleBtn && menu) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    menu.classList.toggle('open');
+                });
+
+                menu.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        menu.classList.remove('open');
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !toggleBtn.contains(e.target)) {
+                        menu.classList.remove('open');
+                    }
+                });
+            }
+
+            // 导航链接高亮
+            document.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>
